@@ -15,19 +15,15 @@ public:
     void Unbind();
     void Send(const QString message, const QHostAddress address, const quint16 port);
 
-    void ReadStart(QString read_method);
-
-    QUdpSocket *socket_;
-
 private:
-    QString datagram_s;
+    QUdpSocket *socket_;
 
 public slots:
     void Read();
     void ReadOne(QHostAddress address, quint16 port);
 
 signals:
-    void LetitData(QString datagram);
+    void ReceivePocket(QString datagram);
 
 };
 

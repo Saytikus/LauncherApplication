@@ -13,6 +13,7 @@ QUdpServer::~QUdpServer() {
 }
 
 bool QUdpServer::Bind(const QHostAddress address, const quint16 port) {
+    connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()));
     int tmp = socket_->bind(address, port);
     if(tmp == true)
         return true;
@@ -25,34 +26,19 @@ void QUdpServer::Send(const QString message, const QHostAddress address, const q
 }
 
 void QUdpServer::Read() {
-    Interface interface;
-    connect(this, SIGNAL(LetitData(QString)), &interface, SLOT(Disp(QString)));
-    while(socket_->hasPendingDatagrams()) {
-        QByteArray datagram;
-        datagram.resize(socket_->pendingDatagramSize());
-        socket_->readDatagram(datagram.data(), datagram.size());
-        datagram_s = "start" + QString(datagram) + "end";
-        emit LetitData(datagram_s);
-    }
-    //ui->message_win->addItem(QString(datagram));
+    QByteArray datagram;
+    datagram.resize(socket_->pendingDatagramSize());
+    socket_->readDatagram(datagram.data(), datagram.size());
+    if(!QString(datagram).isEmpty())
+        emit ReceivePocket(QString(datagram));
 }
 
 void QUdpServer::ReadOne(QHostAddress address, quint16 port) {
-    while(socket_->hasPendingDatagrams()) {
-        QByteArray datagram;
-        datagram.resize(socket_->pendingDatagramSize());
-        socket_->readDatagram(datagram.data(), datagram.size(), &address, &port);
-    }
+    QByteArray datagram;
+    datagram.resize(socket_->pendingDatagramSize());
+    socket_->readDatagram(datagram.data(), datagram.size(), &address, &port);
 }
 
 void QUdpServer::Unbind() {
     socket_->close();
 }
-
-void QUdpServer::ReadStart(QString read_method) {
-    //if(read_method == "Read" or read_method == "Read()")
-        //connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()));
-    //if(read_method == "ReadOne" or read_method == "ReadOne()")
-    connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()));
-}
-

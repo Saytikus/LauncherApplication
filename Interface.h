@@ -26,11 +26,10 @@ private slots:
     void on_read_one0_clicked();
     void on_read0_clicked();
 
-    QString Disp(QString datagram);
+    void DisplayMessage(QString datagram);
 
 private:
     QUdpServer *server;
-    void Display(QString datagram);
 };
 
 #endif // INTERFACE_H

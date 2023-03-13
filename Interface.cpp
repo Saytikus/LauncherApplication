@@ -12,6 +12,7 @@ Interface::~Interface() {
 
 void Interface::on_bind0_clicked() {
     server = new QUdpServer();
+    connect(server, SIGNAL(ReceivePocket(QString)), this, SLOT(DisplayMessage(QString)));
     server->Bind(QHostAddress::LocalHost, ui->bind_port0->value());
 
 
@@ -36,36 +37,17 @@ void Interface::on_unbind0_clicked() {
 
 
 void Interface::on_read_one0_clicked() {
-    //server->ReadStart("ReadOne");
-    //ui->message_win0->addItem(server->ReadOne(QHostAddress::LocalHost, ui->read_port0->value()));
+
 }
 
 
 void Interface::on_read0_clicked() {
-    server->ReadStart("Read");
     server->Read();
 
     ui->read0->setEnabled(false);
-    ui->your_port0->clear();
-    //ui->message_win0->addItem();
 }
 
-QString Interface::Disp(QString datagram) {
+void Interface::DisplayMessage(QString datagram) {
     datagram_ = datagram;
-    ui->your_port0->clear();
-    /*qDebug() << datagram_.isEmpty();
-    if(!datagram_.isEmpty()) {
-        ui->message_win0->addItem(datagram);
-        ui->message_win0->addItem(datagram_);
-        ui->your_port0->clear();
-        ui->your_port0->setText(datagram_);
-        qDebug() << datagram_;
-    }
-    qDebug() << datagram_.isEmpty();*/
-
-    return datagram_;
-}
-
-void Interface::Display(QString datagram) {
-    ui->message_win0->addItem(datagram);
+    ui->message_win0->addItem(datagram_);
 }
