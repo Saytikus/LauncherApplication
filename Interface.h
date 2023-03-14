@@ -17,18 +17,18 @@ class Interface : public QWidget
 public:
     Interface(QWidget *parent = nullptr);
     ~Interface();
-    Ui::Interface *ui;
-    QString datagram_;
 
 private slots:
     void on_bind0_clicked();
     void on_unbind0_clicked();
-    void on_read_one0_clicked();
+
+    //void on_read_one0_clicked(); заморожено до лучших времён
     void on_read0_clicked();
 
     void DisplayMessage(QString datagram);
 
 private:
+    Ui::Interface *ui;
     QUdpServer *server;
 };
 

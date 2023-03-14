@@ -20,7 +20,6 @@ private:
 
 public slots:
     void Read();
-    void ReadOne(QHostAddress address, quint16 port);
 
 signals:
     void ReceivePocket(QString datagram);

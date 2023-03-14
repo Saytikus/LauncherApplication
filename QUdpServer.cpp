@@ -1,8 +1,5 @@
 #include "QUdpServer.h"
 
-#include "Interface.h"
-#include "ui_Interface.h"
-
 QUdpServer::QUdpServer(QObject *parent) : QObject{parent} {
     socket_ = new QUdpSocket();
 }
@@ -31,12 +28,6 @@ void QUdpServer::Read() {
     socket_->readDatagram(datagram.data(), datagram.size());
     if(!QString(datagram).isEmpty())
         emit ReceivePocket(QString(datagram));
-}
-
-void QUdpServer::ReadOne(QHostAddress address, quint16 port) {
-    QByteArray datagram;
-    datagram.resize(socket_->pendingDatagramSize());
-    socket_->readDatagram(datagram.data(), datagram.size(), &address, &port);
 }
 
 void QUdpServer::Unbind() {

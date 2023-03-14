@@ -15,7 +15,6 @@ void Interface::on_bind0_clicked() {
     connect(server, SIGNAL(ReceivePocket(QString)), this, SLOT(DisplayMessage(QString)));
     server->Bind(QHostAddress::LocalHost, ui->bind_port0->value());
 
-
     ui->bind0->setEnabled(false);
     ui->unbind0->setEnabled(true);
     ui->read_ip0->setEnabled(true);
@@ -36,18 +35,17 @@ void Interface::on_unbind0_clicked() {
 }
 
 
-void Interface::on_read_one0_clicked() {
-
-}
+//void Interface::on_read_one0_clicked() {} заморожено до лучших времён
 
 
 void Interface::on_read0_clicked() {
     server->Read();
 
     ui->read0->setEnabled(false);
+
+    ui->read_mode_info->setText("Вы принимаете сообщения.");
 }
 
 void Interface::DisplayMessage(QString datagram) {
-    datagram_ = datagram;
-    ui->message_win0->addItem(datagram_);
+    ui->message_win0->addItem(datagram);
 }
