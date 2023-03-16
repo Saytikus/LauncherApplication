@@ -16,6 +16,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void TestDisplay(QString data);
+
 private:
     Ui::MainWindow *ui;
 

@@ -9,7 +9,7 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::DisplayMessage(const QString datagram) {
+void MainWindow::DisplayMessage(QString datagram) {
     ui->message_win->addItem(datagram);
 }
 
@@ -18,3 +18,6 @@ void MainWindow::on_send_clicked() {
     ui->send_message->clear();
 }
 
+void MainWindow::TestDisplay(QString data) {
+    ui->message_win->addItem("TestDisplay: " + data);
+}

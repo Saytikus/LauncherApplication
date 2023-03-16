@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
     Combiner combi;
 
-    combi.main_win->show();
+    combi.main_win_->show();
 
     combi.Combine();
 

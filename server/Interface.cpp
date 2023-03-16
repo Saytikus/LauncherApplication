@@ -11,9 +11,7 @@ Interface::~Interface() {
 
 
 void Interface::on_bind0_clicked() {
-    server = new QUdpServer();
-    connect(server, SIGNAL(ReceivePocket(QString)), this, SLOT(DisplayMessage(QString)));
-    server->Bind(QHostAddress::LocalHost, ui->bind_port0->value());
+    emit BindClicked(QHostAddress::LocalHost, ui->bind_port0->value());
 
     ui->bind0->setEnabled(false);
     ui->unbind0->setEnabled(true);
@@ -27,11 +25,12 @@ void Interface::on_bind0_clicked() {
 
 
 void Interface::on_unbind0_clicked() {
-    server->Unbind();
+    emit UnbindClicked();
 
     ui->your_port0->clear();
     ui->bind0->setEnabled(true);
     ui->unbind0->setEnabled(false);
+    ui->read0->setEnabled(true);
 }
 
 
@@ -39,13 +38,26 @@ void Interface::on_unbind0_clicked() {
 
 
 void Interface::on_read0_clicked() {
-    server->Read();
+    emit ReadClicked();
 
     ui->read0->setEnabled(false);
 
     ui->read_mode_info->setText("Вы принимаете сообщения.");
 }
 
-void Interface::DisplayMessage(QString datagram) {
+void Interface::DisplayMessage(const QString datagram) {
     ui->message_win0->addItem(datagram);
+}
+
+void Interface::DisplayMessage(const QString datagram, const int count) { //тест
+    ui->message_win0->addItem("Сообщение номер: " + datagram);
+}
+
+void Interface::on_send_clicked() {
+    emit SendClicked(ui->send_message->text().toUtf8(), QHostAddress::LocalHost, ui->send_port->value());
+    ui->send_message->clear();
+}
+
+void Interface::TestDisplay(QString data) {
+    ui->message_win0->addItem("TestDisplay:" + data);
 }

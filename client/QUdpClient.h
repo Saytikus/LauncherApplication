@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QUdpSocket>
+#include <QRandomGenerator>
 
 class QUdpClient : public QObject
 {
@@ -13,8 +14,16 @@ public:
     bool Bind(const QHostAddress address, quint16 port);
     void Send(const QString message,const QHostAddress address, const quint16 port);
 
+    void HandShakeWServer();
+
+    enum ServerModes{
+        AUTH,
+        REG,
+        WORK
+    };
+
 private slots:
-    void Read();
+    QString Read();
     void SendCall(const QString message,const QHostAddress address, const quint16 port);
 
 private:

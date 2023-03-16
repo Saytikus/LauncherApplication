@@ -3,10 +3,9 @@
 
 #include <QObject>
 
-#include "QUdpClient.h"
-#include "MainWindow.h"
-#include "Authorization.h"
-#include "Registration.h"
+#include "QUdpServer.h"
+#include "Interface.h"
+#include "AppDataBase.h"
 
 class Combiner : public QObject {
     Q_OBJECT
@@ -14,11 +13,8 @@ public:
     explicit Combiner(QObject *parent = nullptr);
     void Combine();
 
-    QUdpClient *client_;
-    MainWindow *main_win_;
-    Authorization *auth_win_;
-
-private:
+    QUdpServer *server_;
+    Interface *interface_;
 
 signals:
 

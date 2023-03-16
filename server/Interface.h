@@ -2,9 +2,8 @@
 #define INTERFACE_H
 
 #include <QWidget>
-
-#include "QUdpServer.h"
 #include <QListWidget>
+#include <QHostAddress>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Interface; }
@@ -18,18 +17,25 @@ public:
     Interface(QWidget *parent = nullptr);
     ~Interface();
 
+    void TestDisplay(QString data);
+
 private slots:
     void on_bind0_clicked();
     void on_unbind0_clicked();
-
-    //void on_read_one0_clicked(); заморожено до лучших времён
+    void on_send_clicked();
     void on_read0_clicked();
 
-    void DisplayMessage(QString datagram);
+    void DisplayMessage(const QString datagram);
+    void DisplayMessage(const QString datagram, const int count); //тест
 
 private:
     Ui::Interface *ui;
-    QUdpServer *server;
+
+signals:
+    void BindClicked(const QHostAddress, const quint16 port);
+    void UnbindClicked();
+    void ReadClicked();
+    void SendClicked(const QString message, const QHostAddress address, const quint16 port);
 };
 
 #endif // INTERFACE_H
