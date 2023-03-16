@@ -1,32 +1,27 @@
 #ifndef QUDPCLIENT_H
 #define QUDPCLIENT_H
 
-#include <QWidget>
-
-#include <QUdpSocket>
-#include <QHostAddress>
 #include <QObject>
+#include <QUdpSocket>
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class QUdpClient; }
-QT_END_NAMESPACE
-
-class QUdpClient : public QWidget
+class QUdpClient : public QObject
 {
     Q_OBJECT
-
 public:
-    QUdpClient(QWidget *parent = nullptr);
+    explicit QUdpClient(QObject *parent = nullptr);
     ~QUdpClient();
     bool Bind(const QHostAddress address, quint16 port);
-    void Send(const QString message, const quint16 port);
-    void Read();
+    void Send(const QString message,const QHostAddress address, const quint16 port);
 
 private slots:
-    void on_send_clicked();
+    void Read();
+    void SendCall(const QString message,const QHostAddress address, const quint16 port);
 
 private:
-    Ui::QUdpClient *ui;
     QUdpSocket *socket_;
+
+signals:
+    void ReceivePocket(const QString message);
 };
+
 #endif // QUDPCLIENT_H

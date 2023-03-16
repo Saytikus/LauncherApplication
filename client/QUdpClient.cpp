@@ -1,21 +1,16 @@
 #include "QUdpClient.h"
-#include "ui_QUdpClient.h"
 
-QUdpClient::QUdpClient(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::QUdpClient)
-{
-    ui->setupUi(this);
+QUdpClient::QUdpClient(QObject *parent) : QObject{parent} {
     socket_ = new QUdpSocket();
-    socket_->bind(QHostAddress::LocalHost, 7777);
 }
 
-QUdpClient::~QUdpClient()
-{
-    delete ui;
+QUdpClient::~QUdpClient() {
+    socket_->close();
+    delete socket_;
 }
 
 bool QUdpClient::Bind(const QHostAddress address, const quint16 port) {
+    connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()));
     int tmp = socket_->bind(address, port);
     if(tmp == true)
         return true;
@@ -23,14 +18,18 @@ bool QUdpClient::Bind(const QHostAddress address, const quint16 port) {
         return false;
 }
 
-void QUdpClient::Send(QString message, quint16 port) {
-    socket_->writeDatagram(message.toUtf8(), QHostAddress::LocalHost, port);
+void QUdpClient::Send(QString message, const QHostAddress address, quint16 port) {
+    socket_->writeDatagram(message.toUtf8(), address, port);
 }
 
-void QUdpClient::on_send_clicked() {
-    //QUdpClient client;
-    //client.Send(ui->send_message->text(), ui->send_port->value());
-    socket_->writeDatagram(ui->send_message->text().toUtf8(), QHostAddress::LocalHost, ui->send_port->value());
-    ui->send_message->clear();
+void QUdpClient::Read() {
+    QByteArray datagram;
+    datagram.resize(socket_->pendingDatagramSize());
+    socket_->readDatagram(datagram.data(), datagram.size());
+    if(!QString(datagram).isEmpty())
+        emit ReceivePocket(QString(datagram));
 }
 
+void QUdpClient::SendCall(const QString message, const QHostAddress address, const quint16 port) {
+    this->Send(message, address, port);
+}

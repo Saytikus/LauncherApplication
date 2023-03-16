@@ -1,11 +1,16 @@
-#include "QUdpClient.h"
+#include "Combiner.h"
 
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QUdpClient w;
-    w.show();
+
+    Combiner combi;
+
+    combi.main_win->show();
+
+    combi.Combine();
+
     return a.exec();
 }
