@@ -14,7 +14,7 @@ public:
     bool Bind(const QHostAddress address, quint16 port);
     void Send(const QString message,const QHostAddress address, const quint16 port);
 
-    void HandShakeWServer();
+    //void HandShakeWServer();
 
     enum ServerModes{
         AUTH,
@@ -31,6 +31,8 @@ private:
 
 signals:
     void ReceivePocket(const QString message);
+
+    void SocketWasBinded(const quint16 port); //
 };
 
 #endif // QUDPCLIENT_H

@@ -12,6 +12,7 @@ CONFIG += c++17
 
 SOURCES += \
     AppDataBase.cpp \
+    AppThread.cpp \
     Combiner.cpp \
     QUdpServer.cpp \
     main.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     AppDataBase.h \
+    AppThread.h \
     Combiner.h \
     Interface.h \
     QUdpServer.h

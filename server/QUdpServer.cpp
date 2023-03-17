@@ -10,7 +10,9 @@ QUdpServer::~QUdpServer() {
 }
 
 bool QUdpServer::Bind(const QHostAddress address, const quint16 port) {
-    connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()));
+    //connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()));
+    connect(socket_, SIGNAL(readyRead()), this, SLOT(IncomingConnection()));
+
     int tmp = socket_->bind(address, port);
     if(tmp == true)
         return true;
@@ -30,12 +32,38 @@ QString QUdpServer::Read() {
     QByteArray datagram;
     datagram.resize(socket_->pendingDatagramSize());
     socket_->readDatagram(datagram.data(), datagram.size());
-    if(handshake_successful_ == false && test_count_msg_ == 0 && !QString(datagram).isEmpty()) {
+    /*if(handshake_successful_ == false && test_count_msg_ == 0 && !QString(datagram).isEmpty()) {
         this->HandShake(QString(datagram));
+    }*/
+    if(!QString(datagram).isEmpty()) {
+        emit ReceivePocket(QString(datagram));
     }
-    else if(!QString(datagram).isEmpty()) {
-        emit ReceivePocket(QString(datagram), test_count_msg_);
-        test_count_msg_++;
+    return QString(datagram);
+}
+
+QString QUdpServer::IncomingConnection() {
+    QHostAddress sender_address;
+    quint16 sender_port;
+
+    QByteArray datagram;
+    datagram.resize(socket_->pendingDatagramSize());
+    socket_->readDatagram(datagram.data(), datagram.size(), &sender_address, &sender_port);
+
+    QStringList check_list = QString(datagram).split("|");
+    if(check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH
+                             && check_list[2].toInt() == ServerModes::REG) {
+        QString pair_check = sender_address.toString() + QString::number(sender_port);
+        if(!IpANDPortCheck(pair_check)) {
+            addressANDport_vector_.push_back(pair_check);
+            // здесь должен создаваться поток и продолжаться хендшейк
+        }
+        else {
+            //по замыслу этого не должно быть, поэтому потом удалю
+        }
+    }
+
+    if(!QString(datagram).isEmpty()) {
+        emit ReceivePocket(QString(datagram));
     }
     return QString(datagram);
 }
@@ -56,7 +84,7 @@ void QUdpServer::SendClicked(const QString message, const QHostAddress address, 
     this->Send(message, address, port);
 }
 
-void QUdpServer::HandShake(QString first_msg) {
+/*void QUdpServer::HandShake(QString first_msg) {
     QString connect_string = first_msg;
     emit ReceivePocket("connect_string from client: " + QString(connect_string));
     QStringList check_list = connect_string.split("|");
@@ -64,8 +92,8 @@ void QUdpServer::HandShake(QString first_msg) {
     for(auto i : check_list)
         emit ReceivePocket("check_list part: " + i);
 
-    bool tmp = check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH && check_list[2].toInt() == ServerModes::REG;
-    qDebug() << tmp;
+    bool tmp = check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH && check_list[2].toInt() == ServerModes::REG; //
+    qDebug() << tmp; //
 
     if(check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH
                              && check_list[2].toInt() == ServerModes::REG) {
@@ -78,4 +106,11 @@ void QUdpServer::HandShake(QString first_msg) {
     }
 
     handshake_successful_ = true;
+}*/
+
+bool QUdpServer::IpANDPortCheck(const QString pair) {
+    if(addressANDport_vector_.indexOf(pair) == -1)
+        return false;
+    else
+        return true;
 }

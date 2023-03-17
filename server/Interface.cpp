@@ -33,10 +33,6 @@ void Interface::on_unbind0_clicked() {
     ui->read0->setEnabled(true);
 }
 
-
-//void Interface::on_read_one0_clicked() {} заморожено до лучших времён
-
-
 void Interface::on_read0_clicked() {
     emit ReadClicked();
 
@@ -58,6 +54,3 @@ void Interface::on_send_clicked() {
     ui->send_message->clear();
 }
 
-void Interface::TestDisplay(QString data) {
-    ui->message_win0->addItem("TestDisplay:" + data);
-}

@@ -17,8 +17,6 @@ public:
     Interface(QWidget *parent = nullptr);
     ~Interface();
 
-    void TestDisplay(QString data);
-
 private slots:
     void on_bind0_clicked();
     void on_unbind0_clicked();

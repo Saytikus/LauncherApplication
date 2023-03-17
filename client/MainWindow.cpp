@@ -18,6 +18,10 @@ void MainWindow::on_send_clicked() {
     ui->send_message->clear();
 }
 
-void MainWindow::TestDisplay(QString data) {
+/*void MainWindow::TestDisplay(QString data) {
     ui->message_win->addItem("TestDisplay: " + data);
+}*/
+
+void MainWindow::DisplayMyPort(const quint16 port) {
+    ui->my_port->setText(QString::number(port));
 }
