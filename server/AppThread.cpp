@@ -1,18 +1,24 @@
 #include "AppThread.h"
 
-AppThread::AppThread(QObject *parent) : QObject{parent} {
-    thread_ = new QThread();
-    thread_->setObjectName(QString::number(thread_count_)); //тест
+AppThread::AppThread(int id, QObject *parent) : QThread{parent} {
+    port_ = id;
 }
 
-void AppThread::Start() {
-    thread_->start();
+void AppThread::run() {
+    qDebug() << "Подрубил потокич";
+    socket_ = new QUdpSocket();
+
+    connect(socket_, SIGNAL(readyRead()), this, SLOT(Read()), Qt::DirectConnection);
+
+    socket_->bind(QHostAddress::LocalHost, port_);
+
+    qDebug() << "Порт для работы с клиентом(куда он теперь должен отправлять данные): " << port_;
+    exec();
 }
 
-void AppThread::MoveToThread(QUdpSocket *socket) {
-    socket->moveToThread(thread_);
-}
-
-void AppThread::IncreaseThreadCount() {
-    thread_count_++;
+void AppThread::Read(){
+    QByteArray datagram;
+    datagram.resize(socket_->pendingDatagramSize());
+    socket_->readDatagram(datagram.data(), datagram.size());
+    qDebug() << "Данные: " << datagram << " Поток: " << QThread::currentThread();
 }

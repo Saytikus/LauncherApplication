@@ -2,6 +2,7 @@
 
 QUdpServer::QUdpServer(QObject *parent) : QObject{parent} {
     socket_ = new QUdpSocket();
+    qDebug() << "Основной поток: " << QThread::currentThread();
 }
 
 QUdpServer::~QUdpServer() {
@@ -30,13 +31,14 @@ void QUdpServer::Unbind() {
 
 QString QUdpServer::Read() {
     QByteArray datagram;
-    datagram.resize(socket_->pendingDatagramSize());
-    socket_->readDatagram(datagram.data(), datagram.size());
+    datagram.resize(sock->pendingDatagramSize());
+    sock->readDatagram(datagram.data(), datagram.size());
     /*if(handshake_successful_ == false && test_count_msg_ == 0 && !QString(datagram).isEmpty()) {
         this->HandShake(QString(datagram));
     }*/
     if(!QString(datagram).isEmpty()) {
-        emit ReceivePocket(QString(datagram));
+        qDebug() << QThread::currentThread();
+        emit ReceivePocket(QString("уже многопоток" + datagram));
     }
     return QString(datagram);
 }
@@ -50,11 +52,20 @@ QString QUdpServer::IncomingConnection() {
     socket_->readDatagram(datagram.data(), datagram.size(), &sender_address, &sender_port);
 
     QStringList check_list = QString(datagram).split("|");
+
     if(check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH
                              && check_list[2].toInt() == ServerModes::REG) {
-        QString pair_check = sender_address.toString() + QString::number(sender_port);
+        QString pair_check = sender_address.toString() + "+" + QString::number(sender_port);
+
         if(!IpANDPortCheck(pair_check)) {
             addressANDport_vector_.push_back(pair_check);
+            pair_check.clear();
+
+            emit ReceivePocket(QString(addressANDport_vector_[0])); // на экран выводится только первая пара, я это знаю
+
+            int thread_port = QRandomGenerator::global()->bounded(1, 9999);
+            AppThread *thread = new AppThread(thread_port);
+            thread->start();
             // здесь должен создаваться поток и продолжаться хендшейк
         }
         else {
@@ -77,7 +88,8 @@ void QUdpServer::UnbindCall() {
 }
 
 void QUdpServer::ReadClicked() {
-    this->Read();
+    //this->Read();
+    this->IncomingConnection();
 }
 
 void QUdpServer::SendClicked(const QString message, const QHostAddress address, const quint16 port) {

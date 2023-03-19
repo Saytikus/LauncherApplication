@@ -34,6 +34,7 @@ private:
     //int test_count_msg_ = 0; //однопоточный позор
 
     QThread *thread_;
+    QUdpSocket *sock;
 
     QVector<QString> addressANDport_vector_; //пока что вместо БД
     bool IpANDPortCheck(const QString pair); //пока что вместо БД
@@ -50,7 +51,7 @@ signals:
     void ReceivePocket(const QString datagram);
     void ReceivePocket(const QString datagram, const int count); //тест
 
-    //void SocketWasCreated(QUdpSocket *socket); //
+    void SocketWasCreated(QUdpSocket *socket); //
     //void ServerWasStarted(); //
     //void ThreadWasStarted(); //
 };

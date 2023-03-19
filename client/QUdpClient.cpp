@@ -14,7 +14,7 @@ bool QUdpClient::Bind(const QHostAddress address, const quint16 port) {
     int tmp = socket_->bind(address, port);
     if(tmp == true) {
         emit SocketWasBinded(port);//
-        //this->HandShakeWServer();
+        this->HandShakeWServer();
         return true;
     }
     else
@@ -38,11 +38,11 @@ void QUdpClient::SendCall(const QString message, const QHostAddress address, con
     this->Send(message, address, port);
 }
 
-/*void QUdpClient::HandShakeWServer() {
+void QUdpClient::HandShakeWServer() {
     QString connect_string = QString::number(QRandomGenerator::global()->bounded(1, 200)) +
             "|" + QString::number(ServerModes::AUTH) +
             "|" + QString::number(ServerModes::REG);
     this->Send(connect_string, QHostAddress::LocalHost, 2222);
     emit ReceivePocket("connect_string send to server: " + connect_string);
 
-}*/
+}
