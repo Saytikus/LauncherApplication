@@ -15,16 +15,16 @@ public:
     void run();
 
 private:
-    int thread_count_ = 1; //тест
-
     QUdpSocket *socket_;
     int port_;
 
 private slots:
     void Read();
+    void CompleteConnection();
 
 signals:
-    void Error(QUdpSocket::SocketError err);
+    void ReceivePocketThread(const QString message);
+    void ThreadCreated();
 };
 
 #endif // APPTHREAD_H

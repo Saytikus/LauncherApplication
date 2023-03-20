@@ -2,8 +2,12 @@
 
 Combiner::Combiner(QObject *parent) : QObject{parent} {
     server_ = new QUdpServer();
-
     interface_ = new Interface();
+
+    connect(server_, SIGNAL(SocketBinded(const QHostAddress, const quint16)),
+            interface_, SLOT(DisplayAddressPort(const QHostAddress, const quint16)));
+
+    server_->Bind(QHostAddress::LocalHost);
 }
 
 void Combiner::Combine() {
@@ -12,11 +16,6 @@ void Combiner::Combine() {
             interface_, SLOT(DisplayMessage(const QString, const int))); //тест
 
 
-    connect(interface_, SIGNAL(BindClicked(const QHostAddress, const quint16)),
-            server_, SLOT(BindCall(const QHostAddress, const quint16)));
-    connect(interface_, SIGNAL(UnbindClicked()), server_, SLOT(UnbindCall()));
-    connect(interface_, SIGNAL(ReadClicked()), server_, SLOT(ReadClicked()));
     connect(interface_, SIGNAL(SendClicked(const QString, const QHostAddress, const quint16)),
-            server_, SLOT(SendClicked(const QString, const QHostAddress, const quint16)));
-
+            server_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
 }

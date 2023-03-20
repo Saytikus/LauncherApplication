@@ -6,10 +6,11 @@ Combiner::Combiner(QObject *parent) : QObject{parent} {
 
     main_win_ = new MainWindow();
 
-    connect(client_, SIGNAL(SocketWasBinded(const quint16)),
+    connect(client_, SIGNAL(SocketBinded(const quint16)),
             main_win_, SLOT(DisplayMyPort(const quint16))); //
 
     client_->Bind(QHostAddress::LocalHost, my_port);
+    client_->HandShakeStart();
 
     //main_win_ = new MainWindow();
 
@@ -22,6 +23,5 @@ void Combiner::Combine() {
     connect(main_win_, SIGNAL(SendClicked(const QString, const QHostAddress, const quint16)),
             client_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
 
-    //connect(client_, SIGNAL(SocketWasBinded(const quint16)),
-    //        main_win_, SLOT(DisplayMyPort(const quint16))); //
+
 }

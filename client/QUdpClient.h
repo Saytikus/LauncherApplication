@@ -14,25 +14,33 @@ public:
     bool Bind(const QHostAddress address, quint16 port);
     void Send(const QString message,const QHostAddress address, const quint16 port);
 
-    void HandShakeWServer();
-
     enum ServerModes{
         AUTH,
         REG,
         WORK
     };
 
-private slots:
-    QString Read();
-    void SendCall(const QString message,const QHostAddress address, const quint16 port);
+    QString HandShakeStart();
 
 private:
     QUdpSocket *socket_;
+    QHostAddress server_address_ = QHostAddress::LocalHost;
+    quint16 work_port_;
+    int syn_digit_;
+
+    bool AnswerCheck(const QStringList answer_list, const int syn_digit);
+
+public slots:
+
+private slots:
+    QString Read();
+    void SendCall(const QString message,const QHostAddress address, const quint16 port);
+    QString HandShakeComplete();
 
 signals:
     void ReceivePocket(const QString message);
 
-    void SocketWasBinded(const quint16 port); //
+    void SocketBinded(const quint16 port); //
 };
 
 #endif // QUDPCLIENT_H

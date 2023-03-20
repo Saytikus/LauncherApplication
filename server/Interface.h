@@ -18,21 +18,17 @@ public:
     ~Interface();
 
 private slots:
-    void on_bind0_clicked();
-    void on_unbind0_clicked();
     void on_send_clicked();
-    void on_read0_clicked();
 
     void DisplayMessage(const QString datagram);
     void DisplayMessage(const QString datagram, const int count); //тест
+
+    void DisplayAddressPort(const QHostAddress server_address, const quint16 server_port);
 
 private:
     Ui::Interface *ui;
 
 signals:
-    void BindClicked(const QHostAddress, const quint16 port);
-    void UnbindClicked();
-    void ReadClicked();
     void SendClicked(const QString message, const QHostAddress address, const quint16 port);
 };
 

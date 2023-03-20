@@ -2,6 +2,10 @@
 #define APPDATABASE_H
 
 #include <QObject>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
 
 class AppDataBase : public QObject
 {
@@ -9,6 +13,13 @@ class AppDataBase : public QObject
 public:
     explicit AppDataBase(QObject *parent = nullptr);
 
+private:
+    QSqlDatabase db;
+    QSqlQuery query;
+
+private slots:
+    void InsertValues(const QString table_name, const QString values);
+    void DeleteValues(const QString table_name, const QString values);
 signals:
 
 };
