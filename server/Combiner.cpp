@@ -8,6 +8,12 @@ Combiner::Combiner(QObject *parent) : QObject{parent} {
             interface_, SLOT(DisplayAddressPort(const QHostAddress, const quint16)));
 
     server_->Bind(QHostAddress::LocalHost);
+
+    app_db_ = new AppDataBase();
+    app_db_->test_call_field_name("profiles");
+    //app_db_->InsertValues("profiles", "login, password", "testUser!testPass");
+    //app_db_->DeleteValues("profiles", "login", "testUser!testUser!testUser!testUser");
+    app_db_->test();
 }
 
 void Combiner::Combine() {
@@ -18,4 +24,12 @@ void Combiner::Combine() {
 
     connect(interface_, SIGNAL(SendClicked(const QString, const QHostAddress, const quint16)),
             server_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
+
+    connect(server_, SIGNAL(RequestCreateProfile(const QString, const QString, const QString)),
+            app_db_, SLOT(HandleRequestInsert(const QString, const QString, const QString)));
+
+    connect(server_, SIGNAL(RequestExistsProfile(const QString, const QString, const QString)),
+            app_db_, SLOT(HandleRequestExists(const QString, const QString, const QString)));
+    connect(app_db_, SIGNAL(AnswerRequestExists(const QString)),
+            server_, SLOT(AcceptAnswerExists(const QString)));
 }

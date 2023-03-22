@@ -17,6 +17,7 @@ public:
     QUdpClient *client_;
     MainWindow *main_win_;
     Authorization *auth_win_;
+    Registration *reg_win_;
 
 private:
 

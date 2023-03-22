@@ -28,6 +28,8 @@ private slots:
 
     void DisplayMyPort(const quint16 port);
 
+    void MainWindowShow();
+
 signals:
     void SendClicked(const QString message, const QHostAddress address, const quint16 port);
 };

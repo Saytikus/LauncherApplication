@@ -2,6 +2,8 @@
 #define AUTHORIZATION_H
 
 #include <QWidget>
+#include <QEventLoop>
+#include <QTimer>
 
 namespace Ui {
 class Authorization;
@@ -17,6 +19,20 @@ public:
 
 private:
     Ui::Authorization *ui;
+
+private slots:
+    void AuthWinShow();
+
+    void on_in_reg_win_clicked();
+    void on_sign_in_clicked();
+
+    void AcceptAuthAnswer(const QString auth_answer);
+
+signals:
+    void RegWinCall();
+
+    void AuthStart(const QString login, const QString password);
+    void AuthSuccessful();
 };
 
 #endif // AUTHORIZATION_H

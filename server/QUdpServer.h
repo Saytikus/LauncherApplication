@@ -41,12 +41,22 @@ private slots:
     void SendPocket(const QString message);
     void ThreadCountIncrease();
 
+    void RegMsgFromThread(const QString profile_data);
+    void AuthMsgFromThread(const QString auth_data);
+
+    void AcceptAnswerInsert(const QString answer);
+    void AcceptAnswerExists(const QString answer);
 signals:
     void ReceivePocket(const QString datagram);
     void ReceivePocket(const QString datagram, const int count); //тест
 
     void SocketBinded(const QHostAddress server_address, const quint16 server_port);
+    void TransmitRegMsg(const QString message);
 
+    void RequestCreateProfile(const QString table_name, const QString fields, const QString profile_data);
+
+    void RequestExistsProfile(const QString table_name, const QString fields, const QString auth_data);
+    void TransmitAuthAnswer(const QString complete_answer);
 };
 
 #endif // QUDPSERVER_H

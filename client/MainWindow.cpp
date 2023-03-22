@@ -25,3 +25,7 @@ void MainWindow::on_send_clicked() {
 void MainWindow::DisplayMyPort(const quint16 port) {
     ui->my_port->setText(QString::number(port));
 }
+
+void MainWindow::MainWindowShow() {
+    this->show();
+}

@@ -8,9 +8,8 @@ int main(int argc, char *argv[])
 
     Combiner combi;
 
-    combi.main_win_->show();
+    combi.auth_win_->show();
 
     combi.Combine();
-
     return a.exec();
 }

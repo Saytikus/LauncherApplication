@@ -1,7 +1,6 @@
 #include "Combiner.h"
 
 #include <QApplication>
-#include <QSqlDatabase>
 
 int main(int argc, char *argv[])
 {

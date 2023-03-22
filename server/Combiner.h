@@ -15,6 +15,7 @@ public:
 
     QUdpServer *server_;
     Interface *interface_;
+    AppDataBase *app_db_;
 
 signals:
 

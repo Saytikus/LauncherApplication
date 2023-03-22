@@ -16,15 +16,24 @@ public:
 
 private:
     QUdpSocket *socket_;
-    int port_;
+    quint16 port_;
+    QHostAddress client_address_;
+    quint16 client_port_;
+
+    void RedirectMessage(const QString message);
 
 private slots:
     void Read();
     void CompleteConnection();
 
+    void Send(const QString message);
+
 signals:
     void ReceivePocketThread(const QString message);
     void ThreadCreated();
+
+    void ReceiveRegMsg(const QString profile_data);
+    void ReceiveAuthMsg(const QString auth_data);
 };
 
 #endif // APPTHREAD_H

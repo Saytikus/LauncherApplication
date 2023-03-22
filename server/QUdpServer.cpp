@@ -30,17 +30,6 @@ void QUdpServer::Unbind() {
     socket_->close();
 }
 
-/*QString QUdpServer::Read() {
-    QByteArray datagram;
-    datagram.resize(sock->pendingDatagramSize());
-    sock->readDatagram(datagram.data(), datagram.size());
-    if(!QString(datagram).isEmpty()) {
-        qDebug() << QThread::currentThread();
-        emit ReceivePocket(QString("уже многопоток" + datagram));
-    }
-    return QString(datagram);
-}*/
-
 QString QUdpServer::IncomingConnection() {
     QHostAddress sender_address;
     quint16 sender_port;
@@ -63,8 +52,13 @@ QString QUdpServer::IncomingConnection() {
 
             int thread_port = QRandomGenerator::global()->bounded(1, 9999);
             AppThread *thread = new AppThread(thread_port);
-            connect(thread, SIGNAL(ReceivePocketThread(const QString)), this, SLOT(SendPocket(const QString)));
-            connect(thread, SIGNAL(ThreadCreated()), this, SLOT(ThreadCountIncrease()));
+
+            connect(thread, SIGNAL(ReceivePocketThread(const QString)), this, SLOT(SendPocket(const QString)), Qt::DirectConnection);
+            connect(thread, SIGNAL(ThreadCreated()), this, SLOT(ThreadCountIncrease()), Qt::DirectConnection);
+            connect(thread, SIGNAL(ReceiveRegMsg(const QString)), this, SLOT(RegMsgFromThread(const QString)), Qt::DirectConnection);
+            connect(thread, SIGNAL(ReceiveAuthMsg(const QString)), this, SLOT(AuthMsgFromThread(const QString)), Qt::DirectConnection);
+            connect(this, SIGNAL(TransmitAuthAnswer(const QString)), thread, SLOT(Send(const QString)), Qt::DirectConnection);
+
             thread->start();
             qDebug() << thread_count_;
             QString answer_string = QString::number(check_list[0].toInt() + 1)
@@ -85,30 +79,6 @@ QString QUdpServer::IncomingConnection() {
 void QUdpServer::SendCall(const QString message, const QHostAddress address, const quint16 port) {
     this->Send(message, address, port);
 }
-
-/*void QUdpServer::HandShake(QString first_msg) {
-    QString connect_string = first_msg;
-    emit ReceivePocket("connect_string from client: " + QString(connect_string));
-    QStringList check_list = connect_string.split("|");
-
-    for(auto i : check_list)
-        emit ReceivePocket("check_list part: " + i);
-
-    bool tmp = check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH && check_list[2].toInt() == ServerModes::REG; //
-    qDebug() << tmp; //
-
-    if(check_list[0].toInt() && check_list[1].toInt() == ServerModes::AUTH
-                             && check_list[2].toInt() == ServerModes::REG) {
-        QString answer_string = QString::number(check_list[0].toInt() + 1)
-                                + "|" + QString::number(QRandomGenerator::global()->bounded(1, 200))
-                                + "|" + QString::number(ServerModes::AUTH)
-                                + "|" + QString::number(ServerModes::REG);
-        qDebug() << answer_string;
-        this->Send(answer_string, QHostAddress::LocalHost, 7777);
-    }
-
-    handshake_successful_ = true;
-}*/
 
 bool QUdpServer::IpANDPortCheck(const QString pair) {
     if(addressANDport_vector_.indexOf(pair) == -1)
@@ -132,4 +102,20 @@ void QUdpServer::SendPocket(const QString message) {
 
 void QUdpServer::ThreadCountIncrease() {
     thread_count_++;
+}
+
+void QUdpServer::RegMsgFromThread(const QString profile_data) {
+    emit RequestCreateProfile("profiles", "login, password", profile_data);
+}
+
+void QUdpServer::AuthMsgFromThread(const QString auth_data) {
+    emit RequestExistsProfile("profiles", "login, password", auth_data);
+}
+
+void QUdpServer::AcceptAnswerInsert(const QString answer) {
+
+}
+
+void QUdpServer::AcceptAnswerExists(const QString answer) {
+    emit TransmitAuthAnswer("auth_answer_start|" + answer + "|auth_answer_end");
 }

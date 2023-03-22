@@ -30,6 +30,8 @@ private:
 
     bool AnswerCheck(const QStringList answer_list, const int syn_digit);
 
+    void RedirectMessage(const QString message);
+
 public slots:
 
 private slots:
@@ -37,10 +39,17 @@ private slots:
     void SendCall(const QString message,const QHostAddress address, const quint16 port);
     QString HandShakeComplete();
 
+    void RegRequestSend(const QString login, const QString password);
+
+    void AuthRequestSend(const QString login, const QString password);
+
 signals:
     void ReceivePocket(const QString message);
 
     void SocketBinded(const quint16 port); //
+
+    void ReceiveRegAnswer(const QString reg_answer);
+    void ReceiveAuthAnswer(const QString auth_answer);
 };
 
 #endif // QUDPCLIENT_H

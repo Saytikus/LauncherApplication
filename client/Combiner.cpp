@@ -16,6 +16,11 @@ Combiner::Combiner(QObject *parent) : QObject{parent} {
 
     auth_win_ = new Authorization();
 
+    reg_win_ = new Registration();
+
+    connect(auth_win_, SIGNAL(RegWinCall()), reg_win_, SLOT(RegWinShow()));
+    connect(reg_win_, SIGNAL(AuthWinCall()), auth_win_, SLOT(AuthWinShow()));
+
 }
 
 void Combiner::Combine() {
@@ -23,5 +28,11 @@ void Combiner::Combine() {
     connect(main_win_, SIGNAL(SendClicked(const QString, const QHostAddress, const quint16)),
             client_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
 
+    connect(reg_win_, SIGNAL(RegRequest(const QString, const QString)), client_, SLOT(RegRequestSend(const QString, const QString)));
 
+    connect(auth_win_, SIGNAL(AuthStart(const QString, const QString)),
+            client_, SLOT(AuthRequestSend(const QString, const QString)));
+    connect(client_, SIGNAL(ReceiveAuthAnswer(const QString)),
+            auth_win_, SLOT(AcceptAuthAnswer(const QString)));
+    connect(auth_win_, SIGNAL(AuthSuccessful()), main_win_, SLOT(MainWindowShow()));
 }
