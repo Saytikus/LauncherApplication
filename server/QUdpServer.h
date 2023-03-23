@@ -51,9 +51,9 @@ signals:
     void ReceivePocket(const QString datagram, const int count); //тест
 
     void SocketBinded(const QHostAddress server_address, const quint16 server_port);
-    void TransmitRegMsg(const QString message);
 
     void RequestCreateProfile(const QString table_name, const QString fields, const QString profile_data);
+    void TransmitRegAnswer(const QString complete_answer);
 
     void RequestExistsProfile(const QString table_name, const QString fields, const QString auth_data);
     void TransmitAuthAnswer(const QString complete_answer);

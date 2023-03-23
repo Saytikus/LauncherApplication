@@ -28,7 +28,10 @@ void Combiner::Combine() {
     connect(main_win_, SIGNAL(SendClicked(const QString, const QHostAddress, const quint16)),
             client_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
 
-    connect(reg_win_, SIGNAL(RegRequest(const QString, const QString)), client_, SLOT(RegRequestSend(const QString, const QString)));
+    connect(reg_win_, SIGNAL(RegRequest(const QString, const QString)),
+            client_, SLOT(RegRequestSend(const QString, const QString)));
+    connect(client_, SIGNAL(ReceiveRegAnswer(const QString)),
+            reg_win_, SLOT(AcceptRegAnswer(const QString)));
 
     connect(auth_win_, SIGNAL(AuthStart(const QString, const QString)),
             client_, SLOT(AuthRequestSend(const QString, const QString)));

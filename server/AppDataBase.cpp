@@ -58,20 +58,22 @@ void AppDataBase::HandleRequestInsert(const QString table_name, const QString fi
         qDebug() << "Ошибка в создании profile_data (AppThread)";
         exit(1);
     }
+    if(table_name == "profiles") {
+        query->exec("SELECT login FROM profiles");
+        QStringList login_list;
+        while(query->next()) {
+            login_list << query->value(0).toString();
+        }
+        qDebug() << "HandleRequestInsert - login_list: " << login_list; //
 
-    query->exec("SELECT login FROM profiles");
-    QStringList login_list;
-    while(query->next()) {
-        login_list << query->value(0).toString();
+        QStringList exist_check_list = profile_data.split("!");
+        if(login_list.contains(exist_check_list[0]))
+            emit AnswerRequestInsert("Введённый логин уже занят!");
+        else {
+            this->InsertValues(table_name, fields, profile_data);
+            emit AnswerRequestInsert("Регистрация прошла успешно!");
+        }
     }
-    qDebug() << "HandleRequest - login_list: " << login_list;
-
-    QStringList exist_check_list = profile_data.split("!");
-    if(login_list.contains(exist_check_list[0])) {
-        // тут будет формирование ответа об ошибке, что пользователь с таким логином уже существует
-    }
-    else
-        this->InsertValues(table_name, fields, profile_data);
 }
 
 void AppDataBase::HandleRequestExists(const QString table_name, const QString fields, const QString auth_data) {
@@ -79,19 +81,20 @@ void AppDataBase::HandleRequestExists(const QString table_name, const QString fi
         qDebug() << "Ошибка в создании auth_data (AppThread)";
         exit(1);
     }
+    if(table_name == "profiles") {
+        query->exec("SELECT login FROM profiles");
+        QStringList login_list;
+        while(query->next()) {
+            login_list << query->value(0).toString();
+        }
+        qDebug() << "HandleRequestExists - login_list: " << login_list; //
 
-    query->exec("SELECT login FROM profiles");
-    QStringList login_list;
-    while(query->next()) {
-        login_list << query->value(0).toString();
-    }
-    qDebug() << "HandleExist - login_list: " << login_list;
-
-    QStringList exist_check_list = auth_data.split("!");
-    if(!login_list.contains(exist_check_list[0])) {
-        // тут будет формирование ответа об ошибке, что такого пользователя не существует
-    }
-    else {
-        emit AnswerRequestExists("Такой пользователь существует");
+        QStringList exist_check_list = auth_data.split("!");
+        if(!login_list.contains(exist_check_list[0])) {
+            emit AnswerRequestExists("Такого пользователя не существует");
+        }
+        else {
+            emit AnswerRequestExists("Такой пользователь существует");
+        }
     }
 }

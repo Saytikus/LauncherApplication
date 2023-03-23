@@ -43,7 +43,6 @@ void AppThread::CompleteConnection() {
 
 void AppThread::RedirectMessage(const QString message) {
     QStringList check_message = message.split("|");
-
     if(check_message.size() == 4 &&
        check_message[0] == "reg_start" && check_message[3] == "reg_end") {
         QString profile_data = check_message[1] + "!" + check_message[2];

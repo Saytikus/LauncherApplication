@@ -26,10 +26,12 @@ void Combiner::Combine() {
             server_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
 
     connect(server_, SIGNAL(RequestCreateProfile(const QString, const QString, const QString)),
-            app_db_, SLOT(HandleRequestInsert(const QString, const QString, const QString)));
+            app_db_, SLOT(HandleRequestInsert(const QString, const QString, const QString)), Qt::DirectConnection);
+    connect(app_db_, SIGNAL(AnswerRequestInsert(const QString)),
+            server_, SLOT(AcceptAnswerInsert(const QString)), Qt::DirectConnection);
 
     connect(server_, SIGNAL(RequestExistsProfile(const QString, const QString, const QString)),
-            app_db_, SLOT(HandleRequestExists(const QString, const QString, const QString)));
+            app_db_, SLOT(HandleRequestExists(const QString, const QString, const QString)), Qt::DirectConnection);
     connect(app_db_, SIGNAL(AnswerRequestExists(const QString)),
-            server_, SLOT(AcceptAnswerExists(const QString)));
+            server_, SLOT(AcceptAnswerExists(const QString)), Qt::DirectConnection);
 }

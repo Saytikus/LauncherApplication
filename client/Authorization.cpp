@@ -24,10 +24,12 @@ void Authorization::on_sign_in_clicked() {
 }
 
 void Authorization::AcceptAuthAnswer(const QString auth_answer) {
-    if(auth_answer == "Такого пользователя не существует")
+    if(auth_answer == "Такого пользователя не существует") {
+        ui->auth_result_message->clear();
         ui->auth_result_message->append("<font color=red>" + QString("Такого пользователя не существует") + "</font>");
-
+    }
     else {
+        ui->auth_result_message->clear();
         ui->auth_result_message->append("<font color=green>" + QString("Вы успешно вошли!") + "</font>");
         ui->auth_result_message->append("<font color=green>" + QString("Запускаем приложение...") + "</font>");
         // Спёр код для задержки
@@ -38,6 +40,7 @@ void Authorization::AcceptAuthAnswer(const QString auth_answer) {
         timer.start();
         loop.exec();
 
+        ui->auth_result_message->clear();
         this->close();
         emit AuthSuccessful();
     }

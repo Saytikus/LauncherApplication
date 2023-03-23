@@ -30,9 +30,8 @@ QString QUdpClient::Read() {
     socket_->readDatagram(datagram.data(), datagram.size());
 
     this->RedirectMessage(QString(datagram));
-
-    if(!QString(datagram).isEmpty())
-        emit ReceivePocket(QString(datagram));
+    //if(!QString(datagram).isEmpty())
+        //emit ReceivePocket(QString(datagram));
     return QString(datagram);
 }
 
@@ -97,13 +96,12 @@ void QUdpClient::AuthRequestSend(const QString login, const QString password) {
 void QUdpClient::RedirectMessage(const QString message) {
     QStringList check_message = message.split("|");
 
-    // Тут должен быть блок для регистрации
-    /*if(check_message.size() == 4 &&
-       check_message[0] == "reg_start" && check_message[3] == "reg_end") {
-        QString profile_data = check_message[1] + "!" + check_message[2];
-        qDebug() << "profile_data from thread: " << profile_data;
-        emit ReceiveRegAnswer(profile_data);
-    }*/
+    //Тут должен быть блок для регистрации
+    if(check_message.size() == 3 &&
+       check_message[0] == "reg_answer_start" && check_message[2] == "reg_answer_end") {
+        QString reg_answer = check_message[1];
+        emit ReceiveRegAnswer(reg_answer);
+    }
 
     if(check_message.size() == 3 &&
        check_message[0] == "auth_answer_start" && check_message[2] == "auth_answer_end") {

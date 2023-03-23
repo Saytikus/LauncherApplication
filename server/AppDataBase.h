@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QSqlRecord>
 
+#include <QThread>//
+
 class AppDataBase : public QObject
 {
     Q_OBJECT

@@ -38,6 +38,28 @@ void Registration::RegWinShow() {
     this->show();
 }
 
+void Registration::AcceptRegAnswer(const QString reg_answer) {
+    if(reg_answer == "Введённый логин уже занят!") {
+        ui->reg_result_message->clear();
+        ui->reg_result_message->append("<font color=red>" + QString("Введённый логин уже занят!") + "</font>");
+    }
+    else {
+        ui->reg_result_message->append("<font color=green>" + QString("Регистрация прошла успешно!") + "</font>");
+        ui->reg_result_message->append("<font color=green>" + QString("Возвращаемся в окно авторизации...") + "</font>");
+        // Спёр код для задержки
+        QEventLoop loop;
+        QTimer timer;
+        timer.setInterval(3000);
+        connect (&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.start();
+        loop.exec();
+
+        ui->reg_result_message->clear();
+        this->close();
+        emit AuthWinCall();
+    }
+}
+
 // методы ниже будут перенесены в класс логики(наверное)
 bool Registration::LoginCheck(const QString login) {
     if(login.size() > 15 || login.size() < 5)

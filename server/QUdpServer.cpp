@@ -55,7 +55,10 @@ QString QUdpServer::IncomingConnection() {
 
             connect(thread, SIGNAL(ReceivePocketThread(const QString)), this, SLOT(SendPocket(const QString)), Qt::DirectConnection);
             connect(thread, SIGNAL(ThreadCreated()), this, SLOT(ThreadCountIncrease()), Qt::DirectConnection);
+
             connect(thread, SIGNAL(ReceiveRegMsg(const QString)), this, SLOT(RegMsgFromThread(const QString)), Qt::DirectConnection);
+            connect(this, SIGNAL(TransmitRegAnswer(const QString)), thread, SLOT(Send(const QString)), Qt::DirectConnection);
+
             connect(thread, SIGNAL(ReceiveAuthMsg(const QString)), this, SLOT(AuthMsgFromThread(const QString)), Qt::DirectConnection);
             connect(this, SIGNAL(TransmitAuthAnswer(const QString)), thread, SLOT(Send(const QString)), Qt::DirectConnection);
 
@@ -113,7 +116,8 @@ void QUdpServer::AuthMsgFromThread(const QString auth_data) {
 }
 
 void QUdpServer::AcceptAnswerInsert(const QString answer) {
-
+    qDebug() << answer; //
+    emit TransmitRegAnswer("reg_answer_start|" + answer + "|reg_answer_end");
 }
 
 void QUdpServer::AcceptAnswerExists(const QString answer) {

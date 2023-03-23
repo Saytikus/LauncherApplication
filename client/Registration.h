@@ -2,7 +2,7 @@
 #define REGISTRATION_H
 
 #include <QWidget>
-#include <QPalette>
+#include <QTimer>
 
 namespace Ui {
 class Registration;
@@ -21,6 +21,7 @@ private slots:
     int on_registration_clicked();
 
     void RegWinShow();
+    void AcceptRegAnswer(const QString reg_answer);
 
 private:
     Ui::Registration *ui;
