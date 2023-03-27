@@ -95,6 +95,9 @@
        </item>
        <item>
         <widget class="QTextEdit" name="reg_result_message">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="maximumSize">
           <size>
            <width>220</width>

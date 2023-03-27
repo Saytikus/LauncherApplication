@@ -8,8 +8,6 @@
 #include <QDebug>
 #include <QSqlRecord>
 
-#include <QThread>//
-
 class AppDataBase : public QObject
 {
     Q_OBJECT
@@ -22,16 +20,25 @@ private:
     QSqlDatabase db;
     QSqlQuery *query;
 
+    enum AnswerVariants {
+        failure,
+        success
+    };    
+
 private slots:
-    void InsertValues(const QString table_name, const QString fields, const QString values);
-    void DeleteValues(const QString table_name, const QString first_field, const QString values);
+    bool InsertValues(const QString table_name, const QString fields, const QString values);
+    bool DeleteValues(const QString table_name, const QString first_field, const QString values);
 
     void HandleRequestInsert(const QString table_name, const QString fields, const QString profile_data);
     void HandleRequestExists(const QString table_name, const QString fields, const QString auth_data);
+    void HandleRequestDelete(const QString table_name, const QString first_field_data);
 
 signals:
-    void AnswerRequestInsert(const QString answer);
+    void AnswerRequestInsert(const int answer);
     void AnswerRequestExists(const QString answer);
+    void AnswerRequestDelete(const int answer);
+    void TableUpdate();
+
 };
 
 #endif // APPDATABASE_H

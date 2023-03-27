@@ -25,23 +25,36 @@ void Authorization::on_sign_in_clicked() {
 
 void Authorization::AcceptAuthAnswer(const QString auth_answer) {
     if(auth_answer == "Такого пользователя не существует") {
-        ui->auth_result_message->clear();
         ui->auth_result_message->append("<font color=red>" + QString("Такого пользователя не существует") + "</font>");
-    }
-    else {
+        ui->sign_in->setEnabled(false);
+        this->Delay(3000);
+        ui->sign_in->setEnabled(true);
         ui->auth_result_message->clear();
+    }
+    if(auth_answer == "Неверный пароль") {
+        ui->auth_result_message->append("<font color=red>" + QString("Неверный пароль") + "</font>");
+        ui->sign_in->setEnabled(false);
+        this->Delay(3000);
+        ui->sign_in->setEnabled(true);
+        ui->auth_result_message->clear();
+    }
+    if(auth_answer == "Такой пользователь существует") {
         ui->auth_result_message->append("<font color=green>" + QString("Вы успешно вошли!") + "</font>");
         ui->auth_result_message->append("<font color=green>" + QString("Запускаем приложение...") + "</font>");
-        // Спёр код для задержки
-        QEventLoop loop;
-        QTimer timer;
-        timer.setInterval(3000);
-        connect (&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.start();
-        loop.exec();
+        ui->sign_in->setEnabled(false);
+        this->Delay(3000);
 
         ui->auth_result_message->clear();
         this->close();
         emit AuthSuccessful();
     }
+}
+
+void Authorization::Delay(const int ms) {
+    QEventLoop loop;
+    QTimer timer;
+    timer.setInterval(ms);
+    connect (&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    timer.start();
+    loop.exec();
 }

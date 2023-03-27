@@ -3,37 +3,32 @@
 
 #include <QObject>
 #include <QThread>
+#include <QHostAddress>
 
-#include <QUdpSocket>
-
-class AppThread : public QThread
+class AppThread : public QObject
 {
     Q_OBJECT
 public:
-    explicit AppThread(int id, QObject *parent = nullptr);
-
-    void run();
+    explicit AppThread(QObject *parent = nullptr);
 
 private:
-    QUdpSocket *socket_;
-    quint16 port_;
-    QHostAddress client_address_;
-    quint16 client_port_;
 
-    void RedirectMessage(const QString message);
+    //void RedirectMessage(const QString message);
 
+    //void Disconnect();
 private slots:
-    void Read();
-    void CompleteConnection();
+    //void Read();
+    //void CompleteConnection();
 
-    void Send(const QString message);
+    //void Send(const QString message);
 
 signals:
-    void ReceivePocketThread(const QString message);
-    void ThreadCreated();
+    void SendCall(const QString message, const QHostAddress address, const quint16 port);
+    //void ReceivePocketThread(const QString message);
+    //void ThreadCreated();
 
-    void ReceiveRegMsg(const QString profile_data);
-    void ReceiveAuthMsg(const QString auth_data);
+    //void ReceiveRegMsg(const QString profile_data);
+    //void ReceiveAuthMsg(const QString auth_data);
 };
 
 #endif // APPTHREAD_H

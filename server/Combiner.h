@@ -6,6 +6,7 @@
 #include "QUdpServer.h"
 #include "Interface.h"
 #include "AppDataBase.h"
+#include "DataBaseWindow.h"
 
 class Combiner : public QObject {
     Q_OBJECT
@@ -16,7 +17,7 @@ public:
     QUdpServer *server_;
     Interface *interface_;
     AppDataBase *app_db_;
-
+    DataBaseWindow *db_win_;
 signals:
 
 };

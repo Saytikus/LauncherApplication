@@ -25,11 +25,15 @@ private slots:
 
     void DisplayAddressPort(const QHostAddress server_address, const quint16 server_port);
 
+    void on_database_win_call_clicked();
+
 private:
     Ui::Interface *ui;
 
 signals:
     void SendClicked(const QString message, const QHostAddress address, const quint16 port);
+
+    void DataBaseWinCall();
 };
 
 #endif // INTERFACE_H

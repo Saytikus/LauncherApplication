@@ -26,3 +26,8 @@ void Interface::DisplayAddressPort(const QHostAddress server_address, const quin
     ui->your_ip0->setText(server_address.toString());
     ui->your_port0->setText(QString::number(server_port));
 }
+
+void Interface::on_database_win_call_clicked() {
+    emit DataBaseWinCall();
+}
+

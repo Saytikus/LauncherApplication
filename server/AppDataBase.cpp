@@ -15,28 +15,36 @@ AppDataBase::AppDataBase(QObject *parent) : QObject{parent} {
         qDebug() << query->lastError().text();
 }
 
-void AppDataBase::InsertValues(const QString table_name, const QString fields, const QString values) {
+bool AppDataBase::InsertValues(const QString table_name, const QString fields, const QString values) {
     // сделать нормальную обработку исключений для table_name, fields и values
-    if(!fields.contains(",") || fields.split(",").size() % 2 != 0)
+    if(!fields.contains(",") || fields.split(",").size() % 2 != 0) {
         qDebug() << "Ошибка в строке полей таблицы";
-
-    QStringList values_list = values.split("!");   
-    if(!values.contains("!") || values_list.size() % 2 != 0)
-        qDebug() << "Ошибка в строке значений добавляемых в БД";
-
-    for(int i = 0; i < values_list.size() - 1; i++) {
-        if(!query->exec("INSERT INTO " + table_name + " (" + fields + ") VALUES ('" + values_list[i] + "','" + values_list[i + 1] + "')"))
-            qDebug() << query->lastError().text();
+        return false;
     }
+    QStringList values_list = values.split("!");   
+    if(!values.contains("!") || values_list.size() % 2 != 0) {
+        return false;
+        qDebug() << "Ошибка в строке значений добавляемых в БД";
+    }
+    for(int i = 0; i < values_list.size() - 1; i++) {
+        if(!query->exec("INSERT INTO " + table_name + " (" + fields + ") VALUES ('" + values_list[i] + "','" + values_list[i + 1] + "')")) {
+            return false;
+            qDebug() << query->lastError().text();
+        }
+    }
+    return true;
 }
 
-void AppDataBase::DeleteValues(const QString table_name, const QString first_field, const QString first_values) {
+bool AppDataBase::DeleteValues(const QString table_name, const QString first_field, const QString first_values) {
     // сделать нормальную обработку исключений для table_name, first_field и first_values
     QStringList first_values_list = first_values.split("!");
     for(int i = 0; i < first_values_list.size(); i++) {
-        if(!query->exec("DELETE FROM " + table_name + " WHERE (" + first_field + " = '" + first_values_list[i] + "')"))
+        if(!query->exec("DELETE FROM " + table_name + " WHERE (" + first_field + " = '" + first_values_list[i] + "')")) {
+            return false;
             qDebug() << query->lastError().text();
+        }
     }
+    return true;
 }
 
 void AppDataBase::test_call_field_name(const QString table_name) {
@@ -68,10 +76,12 @@ void AppDataBase::HandleRequestInsert(const QString table_name, const QString fi
 
         QStringList exist_check_list = profile_data.split("!");
         if(login_list.contains(exist_check_list[0]))
-            emit AnswerRequestInsert("Введённый логин уже занят!");
+            emit AnswerRequestInsert(AnswerVariants::failure);
         else {
-            this->InsertValues(table_name, fields, profile_data);
-            emit AnswerRequestInsert("Регистрация прошла успешно!");
+            if(this->InsertValues(table_name, fields, profile_data)) {
+                emit AnswerRequestInsert(AnswerVariants::success);
+                emit TableUpdate();
+            }
         }
     }
 }
@@ -82,10 +92,12 @@ void AppDataBase::HandleRequestExists(const QString table_name, const QString fi
         exit(1);
     }
     if(table_name == "profiles") {
-        query->exec("SELECT login FROM profiles");
+        query->exec("SELECT * FROM profiles");
         QStringList login_list;
+        QStringList password_list;
         while(query->next()) {
-            login_list << query->value(0).toString();
+            login_list << query->value("login").toString();
+            password_list << query->value("password").toString();
         }
         qDebug() << "HandleRequestExists - login_list: " << login_list; //
 
@@ -93,8 +105,27 @@ void AppDataBase::HandleRequestExists(const QString table_name, const QString fi
         if(!login_list.contains(exist_check_list[0])) {
             emit AnswerRequestExists("Такого пользователя не существует");
         }
-        else {
-            emit AnswerRequestExists("Такой пользователь существует");
+        if(login_list.contains(exist_check_list[0])){
+            if(password_list.contains(exist_check_list[1]) && password_list.indexOf(exist_check_list[1]) == login_list.indexOf(exist_check_list[0]))
+                emit AnswerRequestExists("Такой пользователь существует");
+            else
+                emit AnswerRequestExists("Неверный пароль");
         }
+    }
+}
+
+void AppDataBase::HandleRequestDelete(const QString table_name, const QString first_field_data) {
+    if(table_name == "profiles") {
+        query->exec("SELECT login FROM profiles");
+        QStringList login_list;
+        while(query->next())
+            login_list << query->value("login").toString();
+        qDebug() << "HandleRequestDelete - login_list: " << login_list; //
+
+        if(!login_list.contains(first_field_data))
+            emit AnswerRequestDelete(AnswerVariants::failure);
+
+        else if(this->DeleteValues(table_name, "login", first_field_data))
+            emit AnswerRequestDelete(AnswerVariants::success);
     }
 }

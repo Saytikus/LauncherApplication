@@ -26,6 +26,13 @@ private slots:
 private:
     Ui::Registration *ui;
 
+    void Delay(const int ms);
+
+    enum AnswerVariants {
+        failure,
+        success
+    };
+
     bool LoginCheck(const QString login);
     bool PassCheck(const QString password);
 

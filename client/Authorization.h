@@ -20,6 +20,8 @@ public:
 private:
     Ui::Authorization *ui;
 
+    void Delay(const int ms);
+
 private slots:
     void AuthWinShow();
 

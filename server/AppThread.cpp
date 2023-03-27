@@ -1,23 +1,14 @@
 #include "AppThread.h"
 
-AppThread::AppThread(int id, QObject *parent) : QThread{parent} {
-    port_ = id;
+AppThread::AppThread(QObject *parent) : QObject{parent} {
+    QObject sender;
+    QThread thread;
+    thread.setObjectName("Sender");
+    sender.moveToThread(&thread);
+
 }
 
-void AppThread::run() {
-    qDebug() << "Подрубил потокич";
-    socket_ = new QUdpSocket();
-
-    connect(socket_, SIGNAL(readyRead()), this, SLOT(CompleteConnection()), Qt::DirectConnection);
-
-    socket_->bind(QHostAddress::LocalHost, port_);
-    emit ThreadCreated();
-
-    qDebug() << "Порт для работы с клиентом(куда он теперь должен отправлять данные): " << port_;
-    exec();
-}
-
-void AppThread::Read(){
+/*void AppThread::Read(){
     setlocale(LC_ALL, "ru");
     QByteArray datagram;
     datagram.resize(socket_->pendingDatagramSize());
@@ -61,3 +52,9 @@ void AppThread::RedirectMessage(const QString message) {
 void AppThread::Send(const QString message) {
     socket_->writeDatagram(message.toUtf8(), client_address_, client_port_);
 }
+
+void AppThread::Disconnect() {
+    qDebug() << "Disconnect...";
+    socket_->deleteLater();
+    this->quit();
+}*/

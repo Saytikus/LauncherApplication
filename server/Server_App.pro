@@ -13,7 +13,10 @@ CONFIG += c++17
 SOURCES += \
     AppDataBase.cpp \
     AppThread.cpp \
+    ClientBuffer.cpp \
     Combiner.cpp \
+    DataBaseWindow.cpp \
+    DataHandler.cpp \
     QUdpServer.cpp \
     main.cpp \
     Interface.cpp
@@ -21,11 +24,15 @@ SOURCES += \
 HEADERS += \
     AppDataBase.h \
     AppThread.h \
+    ClientBuffer.h \
     Combiner.h \
+    DataBaseWindow.h \
+    DataHandler.h \
     Interface.h \
     QUdpServer.h
 
 FORMS += \
+    DataBaseWindow.ui \
     Interface.ui
 
 # Default rules for deployment.

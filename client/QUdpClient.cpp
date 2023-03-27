@@ -10,6 +10,7 @@ QUdpClient::~QUdpClient() {
 }
 
 bool QUdpClient::Bind(const QHostAddress address, const quint16 port) {
+    qDebug() << address.toString();
     connect(socket_, SIGNAL(readyRead()), this, SLOT(HandShakeComplete()));
     int tmp = socket_->bind(address, port);
     if(tmp == true) {
@@ -52,7 +53,6 @@ QString QUdpClient::HandShakeStart() {
 bool QUdpClient::AnswerCheck(const QStringList answer_list, const int syn_digit) {
     if(answer_list[0].toInt() == syn_digit + 1
        && answer_list[1].toInt()
-       && answer_list[2].toInt()
        && answer_list[3].toInt() == ServerModes::AUTH
        && answer_list[4].toInt() == ServerModes::REG
        && answer_list[5].toInt() == ServerModes::WORK)
@@ -70,7 +70,7 @@ QString QUdpClient::HandShakeComplete() {
     if(answer_list.size() != 6)
         return "При подключении произошла ошибка";
     if(AnswerCheck(answer_list, syn_digit_)) {
-        work_port_ = answer_list[2].toInt();
+        work_port_ = 4352;
         QString completion_string = QString::number(answer_list[0].toInt() + 1) + "|"
                                   + QString::number(answer_list[1].toInt() + 1) + "|"
                                   + QString::number(work_port_) + "|"
@@ -96,7 +96,6 @@ void QUdpClient::AuthRequestSend(const QString login, const QString password) {
 void QUdpClient::RedirectMessage(const QString message) {
     QStringList check_message = message.split("|");
 
-    //Тут должен быть блок для регистрации
     if(check_message.size() == 3 &&
        check_message[0] == "reg_answer_start" && check_message[2] == "reg_answer_end") {
         QString reg_answer = check_message[1];

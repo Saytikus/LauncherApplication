@@ -14,6 +14,8 @@ Combiner::Combiner(QObject *parent) : QObject{parent} {
     //app_db_->InsertValues("profiles", "login, password", "testUser!testPass");
     //app_db_->DeleteValues("profiles", "login", "testUser!testUser!testUser!testUser");
     app_db_->test();
+
+    db_win_ = new DataBaseWindow();
 }
 
 void Combiner::Combine() {
@@ -27,11 +29,17 @@ void Combiner::Combine() {
 
     connect(server_, SIGNAL(RequestCreateProfile(const QString, const QString, const QString)),
             app_db_, SLOT(HandleRequestInsert(const QString, const QString, const QString)), Qt::DirectConnection);
-    connect(app_db_, SIGNAL(AnswerRequestInsert(const QString)),
-            server_, SLOT(AcceptAnswerInsert(const QString)), Qt::DirectConnection);
+    connect(app_db_, SIGNAL(AnswerRequestInsert(const int)),
+            server_, SLOT(AcceptAnswerInsert(const int)), Qt::DirectConnection);
 
     connect(server_, SIGNAL(RequestExistsProfile(const QString, const QString, const QString)),
             app_db_, SLOT(HandleRequestExists(const QString, const QString, const QString)), Qt::DirectConnection);
     connect(app_db_, SIGNAL(AnswerRequestExists(const QString)),
             server_, SLOT(AcceptAnswerExists(const QString)), Qt::DirectConnection);
+
+    connect(interface_, SIGNAL(DataBaseWinCall()), db_win_, SLOT(Show()), Qt::DirectConnection);
+    connect(app_db_, SIGNAL(TableUpdate()), db_win_, SLOT(Refresh()), Qt::DirectConnection);
+
+    connect(db_win_, SIGNAL(DeleteRequest(const QString, const QString)), app_db_, SLOT(HandleRequestDelete(const QString, const QString)), Qt::DirectConnection);
+    connect(app_db_, SIGNAL(AnswerRequestDelete(const int)), db_win_, SLOT(HandleAnswerRequest(const int)), Qt::DirectConnection);
 }

@@ -10,6 +10,5 @@ int main(int argc, char *argv[])
     combi.Combine();
 
     combi.interface_->show();
-
     return a.exec();
 }
