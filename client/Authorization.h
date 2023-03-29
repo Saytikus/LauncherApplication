@@ -19,6 +19,11 @@ public:
 
 private:
     Ui::Authorization *ui;
+    enum AnswerVariants {
+        FAILURE = -1,
+        SUCCESS = 1,
+        PASS_ERR = -2
+    };
 
     void Delay(const int ms);
 
@@ -28,7 +33,7 @@ private slots:
     void on_in_reg_win_clicked();
     void on_sign_in_clicked();
 
-    void AcceptAuthAnswer(const QString auth_answer);
+    void AcceptAuthAnswer(const int auth_answer);
 
 signals:
     void RegWinCall();

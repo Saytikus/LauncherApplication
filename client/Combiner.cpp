@@ -30,12 +30,12 @@ void Combiner::Combine() {
 
     connect(reg_win_, SIGNAL(RegRequest(const QString, const QString)),
             client_, SLOT(RegRequestSend(const QString, const QString)));
-    connect(client_, SIGNAL(ReceiveRegAnswer(const QString)),
-            reg_win_, SLOT(AcceptRegAnswer(const QString)));
+    connect(client_, SIGNAL(ReceiveRegAnswer(const int)),
+            reg_win_, SLOT(AcceptRegAnswer(const int)));
 
     connect(auth_win_, SIGNAL(AuthStart(const QString, const QString)),
             client_, SLOT(AuthRequestSend(const QString, const QString)));
-    connect(client_, SIGNAL(ReceiveAuthAnswer(const QString)),
-            auth_win_, SLOT(AcceptAuthAnswer(const QString)));
+    connect(client_, SIGNAL(ReceiveAuthAnswer(const int)),
+            auth_win_, SLOT(AcceptAuthAnswer(const int)));
     connect(auth_win_, SIGNAL(AuthSuccessful()), main_win_, SLOT(MainWindowShow()));
 }

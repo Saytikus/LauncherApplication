@@ -6,33 +6,32 @@
 #include <QDebug>
 #include <QHostAddress>
 
-class ClientBuffer : public QObject
-{
+class ClientBuffer : public QObject {
     Q_OBJECT
 public:
-    explicit ClientBuffer(QHostAddress client_address, quint16 client_port, QObject *parent = nullptr);
-    ClientBuffer(const ClientBuffer &other);
-    ClientBuffer& operator=(const ClientBuffer &other) { return *this; }
+    explicit ClientBuffer(const QHostAddress client_address, const quint16 client_port, QObject *parent = nullptr);
+    ClientBuffer(const ClientBuffer &buffer);
+    ClientBuffer& operator=(const ClientBuffer &buffer) { return *this; }
 
-    QString GetAdrPort() { return (client_address_.toString() + QString::number(client_port_)); }
-
-    void WriteReadBuffer(const QByteArray data);
-    void WriteSendBuffer(const QByteArray data);
+    quint16 GetBufferId() { return buffer_id_; }
+    QBuffer* GetBuffer(const int buffer);
+    void WriteBuffer(const int buffer, const QByteArray data, const int size);
+    void ClearBuffer(const int buffer);
 
 private:
-    QHostAddress client_address_;
-    quint16 client_port_;
+    quint16 buffer_id_;
+    QBuffer *read_buffer_;
+    QBuffer *send_buffer_;
+    enum Buffers {
+        READ,
+        SEND
+    };
 
-    QBuffer *read_buffer;
-    QBuffer *send_buffer;
-
+    quint16 IdFormation(const QHostAddress client_address, const quint16 client_port);
     float KbSize(const QBuffer &buffer);
 
-private slots:
-
 signals:
-    void ReadBufferChanged();
-    void SendBufferChanged();
+
 };
 
 #endif // CLIENTBUFFER_H

@@ -7,6 +7,8 @@
 #include "Interface.h"
 #include "AppDataBase.h"
 #include "DataBaseWindow.h"
+#include "ClientBufferPool.h"
+#include "DataHandlerThreadPool.h"
 
 class Combiner : public QObject {
     Q_OBJECT
@@ -18,6 +20,9 @@ public:
     Interface *interface_;
     AppDataBase *app_db_;
     DataBaseWindow *db_win_;
+    ClientBufferPool *buf_pool_;
+    DataHandler *connect_handler_;
+    DataHandlerThreadPool *handler_thread_pool_;
 signals:
 
 };

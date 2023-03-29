@@ -25,7 +25,7 @@ public:
 private:
     QUdpSocket *socket_;
     QHostAddress server_address_ = QHostAddress::LocalHost;
-    quint16 work_port_;
+    quint16 work_port_ = 4352;
     int syn_digit_;
 
     bool AnswerCheck(const QStringList answer_list, const int syn_digit);
@@ -48,8 +48,8 @@ signals:
 
     void SocketBinded(const quint16 port); //
 
-    void ReceiveRegAnswer(const QString reg_answer);
-    void ReceiveAuthAnswer(const QString auth_answer);
+    void ReceiveRegAnswer(const int reg_answer);
+    void ReceiveAuthAnswer(const int auth_answer);
 };
 
 #endif // QUDPCLIENT_H

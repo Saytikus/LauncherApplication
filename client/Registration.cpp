@@ -54,15 +54,17 @@ void Registration::RegWinShow() {
     this->show();
 }
 
-void Registration::AcceptRegAnswer(const QString reg_answer) {
-    if(reg_answer.toInt() == AnswerVariants::failure) {
+void Registration::AcceptRegAnswer(const int reg_answer) {
+    switch (reg_answer) {
+    case AnswerVariants::FAILURE:
         ui->registration->setEnabled(false);
         ui->reg_result_message->append("<font color=red>" + QString("Введённый логин уже занят!") + "</font>");
         this->Delay(3000);
         ui->registration->setEnabled(true);
         ui->reg_result_message->clear();
-    }
-    else {
+        break;
+
+    case AnswerVariants::SUCCESS:
         ui->registration->setEnabled(false);
         ui->reg_result_message->append("<font color=green>" + QString("Регистрация прошла успешно!") + "</font>");
         ui->reg_result_message->append("<font color=green>" + QString("Возвращаемся в окно авторизации...") + "</font>");
@@ -75,6 +77,7 @@ void Registration::AcceptRegAnswer(const QString reg_answer) {
 
         this->close();
         emit AuthWinCall();
+        break;
     }
 }
 

@@ -21,17 +21,17 @@ private slots:
     int on_registration_clicked();
 
     void RegWinShow();
-    void AcceptRegAnswer(const QString reg_answer);
+    void AcceptRegAnswer(const int reg_answer);
 
 private:
     Ui::Registration *ui;
+    enum AnswerVariants {
+        FAILURE = -1,
+        SUCCESS = 1,
+        PASS_ERR = -2
+    };
 
     void Delay(const int ms);
-
-    enum AnswerVariants {
-        failure,
-        success
-    };
 
     bool LoginCheck(const QString login);
     bool PassCheck(const QString password);

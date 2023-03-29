@@ -21,8 +21,9 @@ private:
     QSqlQuery *query;
 
     enum AnswerVariants {
-        failure,
-        success
+        FAILURE = -1,
+        SUCCESS = 1,
+        PASS_ERR = -2
     };    
 
 private slots:
@@ -35,7 +36,7 @@ private slots:
 
 signals:
     void AnswerRequestInsert(const int answer);
-    void AnswerRequestExists(const QString answer);
+    void AnswerRequestExists(const int answer);
     void AnswerRequestDelete(const int answer);
     void TableUpdate();
 

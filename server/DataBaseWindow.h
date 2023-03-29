@@ -2,11 +2,8 @@
 #define DATABASEWINDOW_H
 
 #include <QWidget>
-
 #include <QSqlTableModel>
-
 #include <QMessageBox>
-
 #include <QDebug>
 
 namespace Ui {

@@ -14,9 +14,11 @@ SOURCES += \
     AppDataBase.cpp \
     AppThread.cpp \
     ClientBuffer.cpp \
+    ClientBufferPool.cpp \
     Combiner.cpp \
     DataBaseWindow.cpp \
     DataHandler.cpp \
+    DataHandlerThreadPool.cpp \
     QUdpServer.cpp \
     main.cpp \
     Interface.cpp
@@ -25,9 +27,11 @@ HEADERS += \
     AppDataBase.h \
     AppThread.h \
     ClientBuffer.h \
+    ClientBufferPool.h \
     Combiner.h \
     DataBaseWindow.h \
     DataHandler.h \
+    DataHandlerThreadPool.h \
     Interface.h \
     QUdpServer.h
 

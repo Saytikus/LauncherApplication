@@ -66,6 +66,7 @@ void AppDataBase::HandleRequestInsert(const QString table_name, const QString fi
         qDebug() << "Ошибка в создании profile_data (AppThread)";
         exit(1);
     }
+    qDebug() << "HandleRequestInsert запущен";
     if(table_name == "profiles") {
         query->exec("SELECT login FROM profiles");
         QStringList login_list;
@@ -76,10 +77,10 @@ void AppDataBase::HandleRequestInsert(const QString table_name, const QString fi
 
         QStringList exist_check_list = profile_data.split("!");
         if(login_list.contains(exist_check_list[0]))
-            emit AnswerRequestInsert(AnswerVariants::failure);
+            emit AnswerRequestInsert(AnswerVariants::FAILURE);
         else {
             if(this->InsertValues(table_name, fields, profile_data)) {
-                emit AnswerRequestInsert(AnswerVariants::success);
+                emit AnswerRequestInsert(AnswerVariants::SUCCESS);
                 emit TableUpdate();
             }
         }
@@ -103,13 +104,13 @@ void AppDataBase::HandleRequestExists(const QString table_name, const QString fi
 
         QStringList exist_check_list = auth_data.split("!");
         if(!login_list.contains(exist_check_list[0])) {
-            emit AnswerRequestExists("Такого пользователя не существует");
+            emit AnswerRequestExists(AnswerVariants::FAILURE);
         }
         if(login_list.contains(exist_check_list[0])){
             if(password_list.contains(exist_check_list[1]) && password_list.indexOf(exist_check_list[1]) == login_list.indexOf(exist_check_list[0]))
-                emit AnswerRequestExists("Такой пользователь существует");
+                emit AnswerRequestExists(AnswerVariants::SUCCESS);
             else
-                emit AnswerRequestExists("Неверный пароль");
+                emit AnswerRequestExists(AnswerVariants::PASS_ERR);
         }
     }
 }
@@ -123,9 +124,9 @@ void AppDataBase::HandleRequestDelete(const QString table_name, const QString fi
         qDebug() << "HandleRequestDelete - login_list: " << login_list; //
 
         if(!login_list.contains(first_field_data))
-            emit AnswerRequestDelete(AnswerVariants::failure);
+            emit AnswerRequestDelete(AnswerVariants::FAILURE);
 
         else if(this->DeleteValues(table_name, "login", first_field_data))
-            emit AnswerRequestDelete(AnswerVariants::success);
+            emit AnswerRequestDelete(AnswerVariants::SUCCESS);
     }
 }

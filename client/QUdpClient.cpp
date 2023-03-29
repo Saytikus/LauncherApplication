@@ -67,13 +67,11 @@ QString QUdpClient::HandShakeComplete() {
     socket_->readDatagram(answer_string.data(), answer_string.size());
 
     QStringList answer_list = QString(answer_string).split("|");
-    if(answer_list.size() != 6)
+    if(answer_list.size() != 5)
         return "При подключении произошла ошибка";
     if(AnswerCheck(answer_list, syn_digit_)) {
-        work_port_ = 4352;
         QString completion_string = QString::number(answer_list[0].toInt() + 1) + "|"
                                   + QString::number(answer_list[1].toInt() + 1) + "|"
-                                  + QString::number(work_port_) + "|"
                                   + QString::number(ServerModes::AUTH) + "|"
                                   + QString::number(ServerModes::REG) + "|"
                                   + QString::number(ServerModes::WORK);
@@ -85,7 +83,6 @@ QString QUdpClient::HandShakeComplete() {
 }
 
 void QUdpClient::RegRequestSend(const QString login, const QString password) {
-
     this->Send("reg_start|" + login + "|" + password + "|reg_end" , server_address_, work_port_);
 }
 
@@ -94,17 +91,16 @@ void QUdpClient::AuthRequestSend(const QString login, const QString password) {
 }
 
 void QUdpClient::RedirectMessage(const QString message) {
+    qDebug() << "Пришедшее сообщение: " << message;
     QStringList check_message = message.split("|");
 
     if(check_message.size() == 3 &&
        check_message[0] == "reg_answer_start" && check_message[2] == "reg_answer_end") {
-        QString reg_answer = check_message[1];
-        emit ReceiveRegAnswer(reg_answer);
+        emit ReceiveRegAnswer(check_message[1].toInt());
     }
 
     if(check_message.size() == 3 &&
        check_message[0] == "auth_answer_start" && check_message[2] == "auth_answer_end") {
-        QString auth_answer = check_message[1];
-        emit ReceiveAuthAnswer(auth_answer);
+        emit ReceiveAuthAnswer(check_message[1].toInt());
     }
 }

@@ -19,12 +19,9 @@ public:
     ~QUdpServer();
     bool Bind(const QHostAddress address);
     void Unbind();
-
     enum ServerModes{AUTH,
                      REG,
                      WORK};
-
-public slots:
 
 private:
     QUdpSocket *socket_;
@@ -34,8 +31,7 @@ private:
     bool IpANDPortCheck(const QString pair); //пока что вместо БД
 
     bool ConnectCheck(QStringList check_list);
-
-    QVector <ClientBuffer> vector_s_buffers;
+    quint16 IdFormation(const QHostAddress client_address, const quint16 client_port);
 
 private slots:
     void Read();
@@ -46,22 +42,14 @@ private slots:
     void SendPocket(const QString message);
     void ThreadCountIncrease();
 
-    void RegMsgFromThread(const QString profile_data);
-    void AuthMsgFromThread(const QString auth_data);
-
-    //void AcceptAnswerInsert(const int answer);
-    //void AcceptAnswerExists(const QString answer);
 signals:
     void ReceivePocket(const QString datagram);
     void ReceivePocket(const QString datagram, const int count); //тест
+    void ReceivePocket(const QByteArray data, const int size, const quint16 buffer_id);
 
     void SocketBinded(const QHostAddress server_address, const quint16 server_port);
 
-    void RequestCreateProfile(const QString table_name, const QString fields, const QString profile_data);
-    //void TransmitRegAnswer(const QString complete_answer);
-
-    void RequestExistsProfile(const QString table_name, const QString fields, const QString auth_data);
-    //void TransmitAuthAnswer(const QString complete_answer);
+    void ConnectionStarted(const QHostAddress client_address, const quint16 client_port);
 };
 
 #endif // QUDPSERVER_H

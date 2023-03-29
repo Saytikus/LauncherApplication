@@ -1,21 +1,23 @@
 #include "ClientBuffer.h"
 
-ClientBuffer::ClientBuffer(QHostAddress client_address, quint16 client_port, QObject *parent) : QObject{parent} {
-    client_address_ = client_address;
-    client_port_ = client_port;
-    read_buffer = new QBuffer();
-    send_buffer = new QBuffer();
+ClientBuffer::ClientBuffer(const QHostAddress client_address, const quint16 client_port, QObject *parent) : QObject{parent} {
+    buffer_id_ = IdFormation(client_address, client_port);
 
-    qDebug() << client_address_;
-    qDebug() << client_port_;
+    read_buffer_ = new QBuffer();
+    send_buffer_ = new QBuffer();
 }
 
-ClientBuffer::ClientBuffer(const ClientBuffer &other) {
-    client_address_ = other.client_address_;
-    client_port_ = other.client_port_;
+ClientBuffer::ClientBuffer(const ClientBuffer &buffer) {
+    buffer_id_ = buffer.buffer_id_;
+    read_buffer_ = buffer.read_buffer_;
+    send_buffer_ = buffer.send_buffer_;
+}
 
-    read_buffer = other.read_buffer;
-    send_buffer = other.send_buffer;
+quint16 ClientBuffer::IdFormation(const QHostAddress client_address, const quint16 client_port) {
+    quint16 id = client_port;
+    for(QString &digit : client_address.toString().split("."))
+        id += digit.toInt();
+    return id;
 }
 
 float ClientBuffer::KbSize(const QBuffer &buffer) {
@@ -26,16 +28,41 @@ float ClientBuffer::KbSize(const QBuffer &buffer) {
     return kb_size;
 }
 
-void ClientBuffer::WriteReadBuffer(const QByteArray data) {
-    read_buffer->open(QIODevice::WriteOnly);
-    read_buffer->write(data);
-    qDebug() << "Данные из буфера чтения - " << read_buffer->data();
-    qDebug() << "Еще мета - " << read_buffer->bytesToWrite();
-    read_buffer->close();
+QBuffer* ClientBuffer::GetBuffer(const int buffer) {
+    switch (buffer) {
+    case Buffers::READ:
+        return read_buffer_;
+        break;
+    case Buffers::SEND:
+        return send_buffer_;
+        break;
+    }
 }
 
-void ClientBuffer::WriteSendBuffer(const QByteArray data) {
-    send_buffer->open(QIODevice::WriteOnly);
-    send_buffer->write(data);
-    send_buffer->close();
+void ClientBuffer::WriteBuffer(const int buffer, const QByteArray data, const int size) {
+    switch (buffer) {
+    case Buffers::READ:
+        read_buffer_->open(QIODevice::WriteOnly);
+        read_buffer_->write(data, size);
+        qDebug() << "Данные из буфера чтения - " << read_buffer_->data();
+        read_buffer_->close();
+        break;
+    case Buffers::SEND:
+        send_buffer_->open(QIODevice::WriteOnly);
+        send_buffer_->write(data, size);
+        send_buffer_->close();
+        break;
+    }
+
+}
+void ClientBuffer::ClearBuffer(const int buffer) {
+    switch (buffer) {
+    case Buffers::READ:
+        read_buffer_->buffer().clear();
+        break;
+    case Buffers::SEND:
+        send_buffer_->buffer().clear();
+        break;
+    }
+
 }
