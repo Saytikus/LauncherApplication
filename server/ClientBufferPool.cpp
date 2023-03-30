@@ -17,7 +17,7 @@ void ClientBufferPool::WriteReadBuffer(const QByteArray data, const int size, co
             buf->WriteBuffer(Buffers::READ, data, size);
             qDebug() << "Записано в буффер чтения: " << QString(data); //
             qDebug() << "Поток в WriteReadBuffer: " << QThread::currentThread(); //
-            this->SendToHandler(buf, Buffers::READ);
+            this->SendToHandler(buf, buffer_id , Buffers::READ);
         }
     }
 }
@@ -27,19 +27,19 @@ void ClientBufferPool::WriteSendBuffer(const QByteArray data, const int size, co
         if(buf->GetBufferId() == buffer_id) {
             buf->WriteBuffer(Buffers::SEND,data, size);
             qDebug() << "Записано в буффер записи: " << QString(data); //
-            this->SendToHandler(buf, Buffers::SEND);
+            this->SendToHandler(buf, buffer_id , Buffers::SEND);
         }
     }
 }
 
-void ClientBufferPool::SendToHandler(ClientBuffer* buffer, const int buffer_type) {
+void ClientBufferPool::SendToHandler(ClientBuffer* buffer, const quint16 buffer_id, const int buffer_type) {
     switch (buffer_type) {
     case Buffers::READ:
-        emit ReadBufferChanged(buffer->GetBuffer(Buffers::READ));
+        emit ReadBufferChanged(buffer->GetBuffer(Buffers::READ), buffer_id);
         //buffer->ClearBuffer(Buffers::READ); // попытка обосраться
         break;
     case Buffers::SEND:
-        emit SendBufferChanged(buffer->GetBuffer(Buffers::SEND));
+        emit SendBufferChanged(buffer->GetBuffer(Buffers::SEND), buffer_id);
         //buffer->ClearBuffer(Buffers::SEND); // вторая попытка обосраться
         break;
     }

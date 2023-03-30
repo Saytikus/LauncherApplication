@@ -18,7 +18,7 @@ private:
         SEND
     };
 
-    void SendToHandler(ClientBuffer* buffer, const int buffer_type);
+    void SendToHandler(ClientBuffer* buffer, const quint16 buffer_id, const int buffer_type);
 
 private slots:
     void CreateClientBuffer(const QHostAddress client_address, const quint16 client_port);
@@ -26,8 +26,8 @@ private slots:
     void WriteReadBuffer(const QByteArray data, const int size, const quint16 buffer_id);
     void WriteSendBuffer(const QByteArray data, const int size, const quint16 buffer_id);
 signals:
-    void ReadBufferChanged(const QBuffer* read_buffer);
-    void SendBufferChanged(const QBuffer* send_buffer);
+    void ReadBufferChanged(const QBuffer* read_buffer, const quint16 buffer_id);
+    void SendBufferChanged(const QBuffer* send_buffer, const quint16 buffer_id);
 
 };
 

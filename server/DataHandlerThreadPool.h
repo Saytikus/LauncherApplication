@@ -24,7 +24,21 @@ private:
 
 private slots:
     void DeleteHandler(QThread *thread);
-    void ReadBufferChange(const QBuffer *read_buffer);
+    void ReadBufferChange(const QBuffer *read_buffer, const quint16 buffer_id);
+
+    void TransferRequestCreateProfile(const QString table_name, const QString fields, const QString profile_data);
+    void TransferRequestExistsProfile(const QString table_name, const QString fields, const QString auth_data);
+    void TransferSendCompleteAnswer(const QByteArray complete_answer, const int size, const quint16 buffer_id);
+
+    void SendAnswerCreateProfile(const int answer);
+    void SendAnswerExistsProfile(const int answer);
+signals:
+    void RequestCreateProfile(const QString table_name, const QString fields, const QString profile_data);
+    void RequestExistsProfile(const QString table_name, const QString fields, const QString auth_data);
+    void SendCompleteAnswer(const QByteArray complete_answer, const int size, const quint16 buffer_id);
+
+    void SendAnswerCreateProfileToHandler(const int answer);
+    void SendAnswerExistsProfileToHandler(const int answer);
 
 };
 

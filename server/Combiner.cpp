@@ -28,16 +28,16 @@ void Combiner::Combine() {
     connect(interface_, SIGNAL(SendClicked(const QString, const QHostAddress, const quint16)),
             server_, SLOT(SendCall(const QString, const QHostAddress, const quint16)));
 
-/*    connect(server_, SIGNAL(RequestCreateProfile(const QString, const QString, const QString)),
+    connect(handler_thread_pool_, SIGNAL(RequestCreateProfile(const QString, const QString, const QString)),
             app_db_, SLOT(HandleRequestInsert(const QString, const QString, const QString)), Qt::DirectConnection);
     connect(app_db_, SIGNAL(AnswerRequestInsert(const int)),
-            server_, SLOT(HandleAnswerCreateProfile(const int)), Qt::DirectConnection);
+            handler_thread_pool_, SLOT(SendAnswerCreateProfile(const int)), Qt::DirectConnection);
 
-    connect(server_, SIGNAL(RequestExistsProfile(const QString, const QString, const QString)),
+    connect(handler_thread_pool_, SIGNAL(RequestExistsProfile(const QString, const QString, const QString)),
             app_db_, SLOT(HandleRequestExists(const QString, const QString, const QString)), Qt::DirectConnection);
     connect(app_db_, SIGNAL(AnswerRequestExists(const int)),
-            server_, SLOT(HandleAnswerExistsProfile(const int)), Qt::DirectConnection);
-*/
+            handler_thread_pool_, SLOT(SendAnswerExistsProfile(const int)), Qt::DirectConnection);
+
     connect(interface_, SIGNAL(DataBaseWinCall()), db_win_, SLOT(Show()), Qt::DirectConnection);
     connect(app_db_, SIGNAL(TableUpdate()), db_win_, SLOT(Refresh()), Qt::DirectConnection);
 
@@ -49,6 +49,12 @@ void Combiner::Combine() {
     connect(server_, SIGNAL(ReceivePocket(const QByteArray, const int, const quint16)),
             buf_pool_, SLOT(WriteReadBuffer(const QByteArray, const int, const quint16)));
 
-    connect(buf_pool_, SIGNAL(ReadBufferChanged(const QBuffer*)),
-            handler_thread_pool_, SLOT(ReadBufferChange(const QBuffer*)));
+    connect(buf_pool_, SIGNAL(ReadBufferChanged(const QBuffer*, const quint16)),
+            handler_thread_pool_, SLOT(ReadBufferChange(const QBuffer*, const quint16)));
+
+    connect(handler_thread_pool_, SIGNAL(SendCompleteAnswer(const QByteArray, const int, const quint16)),
+            buf_pool_, SLOT(WriteSendBuffer(const QByteArray, const int, const quint16)));
+
+    connect(buf_pool_, SIGNAL(SendBufferChanged(const QBuffer*, const quint16)),
+            server_, SLOT(Send()));
 }
