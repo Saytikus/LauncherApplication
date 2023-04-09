@@ -7,6 +7,7 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QSqlRecord>
+#include <QThread> //
 
 class AppDataBase : public QObject
 {
@@ -19,24 +20,23 @@ public:
 private:
     QSqlDatabase db;
     QSqlQuery *query;
-
     enum AnswerVariants {
         FAILURE = -1,
         SUCCESS = 1,
         PASS_ERR = -2
-    };    
+    };
 
 private slots:
     bool InsertValues(const QString table_name, const QString fields, const QString values);
     bool DeleteValues(const QString table_name, const QString first_field, const QString values);
 
-    void HandleRequestInsert(const QString table_name, const QString fields, const QString profile_data);
-    void HandleRequestExists(const QString table_name, const QString fields, const QString auth_data);
+    void HandleRequestInsert(const QString table_name, const QString fields, const QString profile_data, const QString buffer_id);
+    void HandleRequestExists(const QString table_name, const QString fields, const QString auth_data, const QString buffer_id);
     void HandleRequestDelete(const QString table_name, const QString first_field_data);
 
 signals:
-    void AnswerRequestInsert(const int answer);
-    void AnswerRequestExists(const int answer);
+    void AnswerRequestInsert(const int answer, const QString buffer_id);
+    void AnswerRequestExists(const int answer, const QString buffer_id);
     void AnswerRequestDelete(const int answer);
     void TableUpdate();
 

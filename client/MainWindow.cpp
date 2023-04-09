@@ -29,3 +29,9 @@ void MainWindow::DisplayMyPort(const quint16 port) {
 void MainWindow::MainWindowShow() {
     this->show();
 }
+
+void MainWindow::closeEvent(QCloseEvent *event) { // знаю, что работает только на мейн окно клиента
+    event->ignore();
+    emit ConnectionMustBeFinished();
+    event->accept();
+}

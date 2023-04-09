@@ -18,7 +18,7 @@ void Interface::DisplayMessage(const QString datagram, const int count) { //те
 }
 
 void Interface::on_send_clicked() {
-    emit SendClicked(ui->send_message->text().toUtf8(), QHostAddress::LocalHost, ui->send_port->value());
+    emit SendClicked(ui->send_message->text(), QHostAddress::LocalHost, ui->send_port->value());
     ui->send_message->clear();
 }
 

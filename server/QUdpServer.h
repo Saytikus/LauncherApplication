@@ -25,31 +25,38 @@ public:
 
 private:
     QUdpSocket *socket_;
-    int thread_count_ = 2;
+    AppThread *send_thread;
 
     QVector<QString> addressANDport_vector_; //пока что вместо БД
     bool IpANDPortCheck(const QString pair); //пока что вместо БД
 
     bool ConnectCheck(QStringList check_list);
-    quint16 IdFormation(const QHostAddress client_address, const quint16 client_port);
+    QString IdComposition(const QHostAddress client_address, const quint16 client_port);
 
 private slots:
     void Read();
-    void Send(const QString message, const QHostAddress address, const quint16 port);
+    void Send(const QByteArray message, const QHostAddress address, const quint16 port);
 
     void SendCall(const QString message, const QHostAddress address, const quint16 port);
     bool IncomingConnection(const QString message, const QHostAddress sender_address, const quint16 sender_port);
     void SendPocket(const QString message);
-    void ThreadCountIncrease();
+    void SendBufferChange(const QBuffer* send_buffer, const QString buffer_id);
+    void TransferHandleSendBufferFinished(const QString buffer_id);
+
+    QStringList IdDecomposition(const QString buffer_id, const bool need_signal = false);
 
 signals:
     void ReceivePocket(const QString datagram);
     void ReceivePocket(const QString datagram, const int count); //тест
-    void ReceivePocket(const QByteArray data, const int size, const quint16 buffer_id);
+    void ReceivePocket(const QByteArray data, const int size, const QString buffer_id);
 
     void SocketBinded(const QHostAddress server_address, const quint16 server_port);
 
     void ConnectionStarted(const QHostAddress client_address, const quint16 client_port);
+
+    void IdDecompositionFinished(const QStringList address_port_list);
+
+    void HandleSendBufferFinished(const QString buffer_id);
 };
 
 #endif // QUDPSERVER_H

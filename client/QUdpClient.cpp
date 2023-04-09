@@ -31,8 +31,8 @@ QString QUdpClient::Read() {
     socket_->readDatagram(datagram.data(), datagram.size());
 
     this->RedirectMessage(QString(datagram));
-    //if(!QString(datagram).isEmpty())
-        //emit ReceivePocket(QString(datagram));
+    if(!QString(datagram).isEmpty())
+        emit ReceivePocket(QString(datagram));
     return QString(datagram);
 }
 
@@ -103,4 +103,8 @@ void QUdpClient::RedirectMessage(const QString message) {
        check_message[0] == "auth_answer_start" && check_message[2] == "auth_answer_end") {
         emit ReceiveAuthAnswer(check_message[1].toInt());
     }
+}
+
+void QUdpClient::SendConnectionClosed() {
+    this->Send("request|to close connection", server_address_, work_port_);
 }

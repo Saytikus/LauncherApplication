@@ -21,6 +21,15 @@ Combiner::Combiner(QObject *parent) : QObject{parent} {
     connect(auth_win_, SIGNAL(RegWinCall()), reg_win_, SLOT(RegWinShow()));
     connect(reg_win_, SIGNAL(AuthWinCall()), auth_win_, SLOT(AuthWinShow()));
 
+    //
+    QStringList log_list = {"Test1test1", "Test2test2"};
+    int a = QRandomGenerator::global()->bounded(0, 2);
+    QStringList pass_list = {"Test1test", "Test2test"};
+    int b = QRandomGenerator::global()->bounded(0, 2);
+    client_->AuthRequestSend(log_list[a], pass_list[b]);
+    main_win_->DisplayMessage("Отправленный логин:" + log_list[a]);
+    main_win_->DisplayMessage("Отправленный пароль: " +pass_list[b]);
+    //
 }
 
 void Combiner::Combine() {
@@ -38,4 +47,7 @@ void Combiner::Combine() {
     connect(client_, SIGNAL(ReceiveAuthAnswer(const int)),
             auth_win_, SLOT(AcceptAuthAnswer(const int)));
     connect(auth_win_, SIGNAL(AuthSuccessful()), main_win_, SLOT(MainWindowShow()));
+
+    connect(main_win_, SIGNAL(ConnectionMustBeFinished()),
+            client_, SLOT(SendConnectionClosed()));
 }

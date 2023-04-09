@@ -18,6 +18,22 @@ bool QUdpServer::Bind(const QHostAddress address) {
         return false;
     else {
         emit SocketBinded(address, port);
+
+        QThread *thread = new QThread();
+        thread->setObjectName("Sender thread");
+        send_thread = new AppThread();
+        send_thread->moveToThread(thread);
+
+        connect(send_thread, SIGNAL(IdDecompositionCall(const QString, const bool)),
+                this, SLOT(IdDecomposition(const QString, const bool)), Qt::DirectConnection);
+        connect(this, SIGNAL(IdDecompositionFinished(const QStringList)),
+                send_thread, SLOT(SendFromBufferContinue(const QStringList)), Qt::DirectConnection);
+        connect(send_thread, SIGNAL(SendCall(const QByteArray, const QHostAddress, const quint16)),
+                this, SLOT(Send(const QByteArray, const QHostAddress, const quint16)), Qt::DirectConnection);
+        connect(send_thread, SIGNAL(HandleSendBufferFinished(const QString)),
+                this, SLOT(TransferHandleSendBufferFinished(const QString)), Qt::DirectConnection);
+
+        thread->start();
         return true;
     }
 }
@@ -45,12 +61,15 @@ void QUdpServer::Read(){
         }
     }
     else if(!addressANDport_vector_.isEmpty())
-        emit ReceivePocket(datagram, datagram.size(), this->IdFormation(sender_address, sender_port));
+        emit ReceivePocket(datagram, datagram.size(), this->IdComposition(sender_address, sender_port));
     emit ReceivePocket("Данные: " + QString(datagram));
 }
 
-void QUdpServer::Send(const QString message, const QHostAddress address, const quint16 port) {
-    socket_->writeDatagram(message.toUtf8(), address, port);
+void QUdpServer::Send(const QByteArray message, const QHostAddress address, const quint16 port) {
+    qDebug() << "Send start - " << QThread::currentThread();
+    qDebug() << "MESSAGE: " << message;
+    qDebug() << "ADDR: " << address << " | " << "PORT: " << port;
+    socket_->writeDatagram(message, address, port);
 }
 
 void QUdpServer::Unbind() {
@@ -64,28 +83,12 @@ bool QUdpServer::IncomingConnection(const QString message, const QHostAddress se
     if(check_list.size() != 4)
         return false;
     if(ConnectCheck(check_list)) {
-        /*int thread_port = QRandomGenerator::global()->bounded(1, 9999);
-        AppThread *thread = new AppThread(thread_port);
-
-        connect(thread, SIGNAL(ReceivePocketThread(const QString)), this, SLOT(SendPocket(const QString)), Qt::DirectConnection);
-        connect(thread, SIGNAL(ThreadCreated()), this, SLOT(ThreadCountIncrease()), Qt::DirectConnection);
-
-        connect(thread, SIGNAL(ReceiveRegMsg(const QString)), this, SLOT(RegMsgFromThread(const QString)), Qt::DirectConnection);
-        connect(this, SIGNAL(TransmitRegAnswer(const QString)), thread, SLOT(Send(const QString)), Qt::DirectConnection);
-
-        connect(thread, SIGNAL(ReceiveAuthMsg(const QString)), this, SLOT(AuthMsgFromThread(const QString)), Qt::DirectConnection);
-        connect(this, SIGNAL(TransmitAuthAnswer(const QString)), thread, SLOT(Send(const QString)), Qt::DirectConnection);
-
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-        thread->start();
-        qDebug() << thread_count_; */
         QString answer_string = QString::number(check_list[0].toInt() + 1)
                                 + "|" + QString::number(QRandomGenerator::global()->bounded(1, 200))
                                 + "|" + QString::number(ServerModes::AUTH)
                                 + "|" + QString::number(ServerModes::REG)
                                 + "|" + QString::number(ServerModes::WORK);
-        this->Send(answer_string, sender_address, sender_port);
+        this->Send(answer_string.toUtf8(), sender_address, sender_port);
 
         QHostAddress client_address;
         quint16 client_port;
@@ -106,7 +109,7 @@ bool QUdpServer::IncomingConnection(const QString message, const QHostAddress se
 }
 
 void QUdpServer::SendCall(const QString message, const QHostAddress address, const quint16 port) {
-    this->Send(message, address, port);
+    this->Send(message.toUtf8(), address, port);
 }
 
 bool QUdpServer::IpANDPortCheck(const QString pair) {
@@ -125,17 +128,31 @@ bool QUdpServer::ConnectCheck(QStringList check_list) {
         return false;
 }
 
-quint16 QUdpServer::IdFormation(const QHostAddress client_address, const quint16 client_port) {
-    quint16 id = client_port;
-    for(QString digit : client_address.toString().split("."))
-        id += digit.toInt();
-    return id;
+QString QUdpServer::IdComposition(const QHostAddress client_address, const quint16 client_port) {
+    return (client_address.toString() + "_" + QString::number(client_port));
+}
+
+QStringList QUdpServer::IdDecomposition(const QString buffer_id, const bool need_signal) {
+    qDebug() << "IdDecomposition start";
+    qDebug() << QThread::currentThread();
+    if(need_signal)
+        emit IdDecompositionFinished(buffer_id.split("_"));
+    return buffer_id.split("_");
 }
 
 void QUdpServer::SendPocket(const QString message) {
     emit ReceivePocket(message);
 }
 
-void QUdpServer::ThreadCountIncrease() {
-    thread_count_++;
+void QUdpServer::SendBufferChange(const QBuffer* send_buffer, const QString buffer_id) {
+    qDebug() << "Поток в SendBufferChange: " << QThread::currentThread();
+
+    QMetaObject::invokeMethod(send_thread, "SendFromBufferStart",
+                              Qt::QueuedConnection,
+                              Q_ARG(const QBuffer*, send_buffer),
+                              Q_ARG(const QString, buffer_id));
+}
+
+void QUdpServer::TransferHandleSendBufferFinished(const QString buffer_id) {
+    emit HandleSendBufferFinished(buffer_id);
 }

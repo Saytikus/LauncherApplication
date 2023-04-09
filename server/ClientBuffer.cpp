@@ -1,7 +1,7 @@
 #include "ClientBuffer.h"
 
 ClientBuffer::ClientBuffer(const QHostAddress client_address, const quint16 client_port, QObject *parent) : QObject{parent} {
-    buffer_id_ = IdFormation(client_address, client_port);
+    buffer_id_ = IdComposition(client_address, client_port);
 
     read_buffer_ = new QBuffer();
     send_buffer_ = new QBuffer();
@@ -13,11 +13,8 @@ ClientBuffer::ClientBuffer(const ClientBuffer &buffer) {
     send_buffer_ = buffer.send_buffer_;
 }
 
-quint16 ClientBuffer::IdFormation(const QHostAddress client_address, const quint16 client_port) {
-    quint16 id = client_port;
-    for(QString &digit : client_address.toString().split("."))
-        id += digit.toInt();
-    return id;
+QString ClientBuffer::IdComposition(const QHostAddress client_address, const quint16 client_port) {
+    return (client_address.toString() + "_" + QString::number(client_port));
 }
 
 float ClientBuffer::KbSize(const QBuffer &buffer) {

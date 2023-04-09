@@ -13,13 +13,6 @@ public:
     ~QUdpClient();
     bool Bind(const QHostAddress address, quint16 port);
     void Send(const QString message,const QHostAddress address, const quint16 port);
-
-    enum ServerModes{
-        AUTH,
-        REG,
-        WORK
-    };
-
     QString HandShakeStart();
 
 private:
@@ -27,12 +20,18 @@ private:
     QHostAddress server_address_ = QHostAddress::LocalHost;
     quint16 work_port_ = 4352;
     int syn_digit_;
+    enum ServerModes{
+        AUTH,
+        REG,
+        WORK,
+        CLOSECONNECTION
+    };
 
     bool AnswerCheck(const QStringList answer_list, const int syn_digit);
-
     void RedirectMessage(const QString message);
 
 public slots:
+    void AuthRequestSend(const QString login, const QString password); // test
 
 private slots:
     QString Read();
@@ -40,8 +39,8 @@ private slots:
     QString HandShakeComplete();
 
     void RegRequestSend(const QString login, const QString password);
-
-    void AuthRequestSend(const QString login, const QString password);
+    //void AuthRequestSend(const QString login, const QString password);
+    void SendConnectionClosed();
 
 signals:
     void ReceivePocket(const QString message);

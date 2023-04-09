@@ -13,13 +13,13 @@ public:
     ClientBuffer(const ClientBuffer &buffer);
     ClientBuffer& operator=(const ClientBuffer &buffer) { return *this; }
 
-    quint16 GetBufferId() { return buffer_id_; }
+    QString GetBufferId() { return buffer_id_; }
     QBuffer* GetBuffer(const int buffer);
     void WriteBuffer(const int buffer, const QByteArray data, const int size);
     void ClearBuffer(const int buffer);
 
 private:
-    quint16 buffer_id_;
+    QString buffer_id_;
     QBuffer *read_buffer_;
     QBuffer *send_buffer_;
     enum Buffers {
@@ -27,7 +27,7 @@ private:
         SEND
     };
 
-    quint16 IdFormation(const QHostAddress client_address, const quint16 client_port);
+    QString IdComposition(const QHostAddress client_address, const quint16 client_port);
     float KbSize(const QBuffer &buffer);
 
 signals:

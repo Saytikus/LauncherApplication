@@ -11,36 +11,70 @@ void ClientBufferPool::CreateClientBuffer(const QHostAddress client_address, con
     qDebug() << "Буфер создан"; //
 }
 
-void ClientBufferPool::WriteReadBuffer(const QByteArray data, const int size, const quint16 buffer_id) {
+void ClientBufferPool::WriteReadBuffer(const QByteArray data, const int size, const QString buffer_id) {
     for(ClientBuffer *buf : *vector_client_buffer_) {
-        if(buf->GetBufferId() == buffer_id) {
+        if(buf->GetBufferId() == buffer_id) {           
             buf->WriteBuffer(Buffers::READ, data, size);
             qDebug() << "Записано в буффер чтения: " << QString(data); //
             qDebug() << "Поток в WriteReadBuffer: " << QThread::currentThread(); //
-            this->SendToHandler(buf, buffer_id , Buffers::READ);
+            this->SendToHandler(buf, buffer_id , Buffers::READ); 
         }
     }
 }
 
-void ClientBufferPool::WriteSendBuffer(const QByteArray data, const int size, const quint16 buffer_id) {
+void ClientBufferPool::WriteSendBuffer(const QByteArray data, const int size, const QString buffer_id) {
     for(ClientBuffer *buf : *vector_client_buffer_) {
         if(buf->GetBufferId() == buffer_id) {
+            mutex.lock();
             buf->WriteBuffer(Buffers::SEND,data, size);
             qDebug() << "Записано в буффер записи: " << QString(data); //
             this->SendToHandler(buf, buffer_id , Buffers::SEND);
+            mutex.unlock();
         }
     }
 }
 
-void ClientBufferPool::SendToHandler(ClientBuffer* buffer, const quint16 buffer_id, const int buffer_type) {
+void ClientBufferPool::SendToHandler(ClientBuffer* buffer, const QString buffer_id, const int buffer_type) {
     switch (buffer_type) {
     case Buffers::READ:
         emit ReadBufferChanged(buffer->GetBuffer(Buffers::READ), buffer_id);
-        //buffer->ClearBuffer(Buffers::READ); // попытка обосраться
         break;
     case Buffers::SEND:
         emit SendBufferChanged(buffer->GetBuffer(Buffers::SEND), buffer_id);
-        //buffer->ClearBuffer(Buffers::SEND); // вторая попытка обосраться
         break;
+    }
+}
+
+void ClientBufferPool::ClearReadBuffer(const QString buffer_id) {
+    for(ClientBuffer *buf : *vector_client_buffer_) {
+        if(buf->GetBufferId() == buffer_id) {
+            mutex.lock();
+            qDebug() << "Буфер чтения до очищения - " << buf->GetBuffer(Buffers::READ)->buffer().data();
+            buf->ClearBuffer(Buffers::READ);
+            qDebug() << "Буфер чтения после очищения - " << buf->GetBuffer(Buffers::READ)->buffer().data();
+            mutex.unlock();
+        }
+    }
+}
+
+void ClientBufferPool::ClearSendBuffer(const QString buffer_id) {
+    for(ClientBuffer *buf : *vector_client_buffer_) {
+        if(buf->GetBufferId() == buffer_id) {
+            mutex.lock();
+            qDebug() << "Буфер записи до очищения - " << buf->GetBuffer(Buffers::SEND)->buffer().data();
+            buf->ClearBuffer(Buffers::SEND);
+            qDebug() << "Буфер записи после очищения - " << buf->GetBuffer(Buffers::SEND)->buffer().data();
+            mutex.unlock();
+        }
+    }
+}
+
+void ClientBufferPool::DeleteClientBuffer(const QString buffer_id) {
+    for(ClientBuffer *buf : *vector_client_buffer_) {
+        if(buf->GetBufferId() == buffer_id) {
+            mutex.lock();
+            qDebug() << vector_client_buffer_->removeOne(buf);
+            mutex.unlock();
+        }
     }
 }

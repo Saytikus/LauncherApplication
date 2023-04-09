@@ -61,7 +61,7 @@ void AppDataBase::test() {
     }
 }
 
-void AppDataBase::HandleRequestInsert(const QString table_name, const QString fields, const QString profile_data) {
+void AppDataBase::HandleRequestInsert(const QString table_name, const QString fields, const QString profile_data, const QString buffer_id) {
     if(!profile_data.contains("!")) {
         qDebug() << "Ошибка в создании profile_data (AppThread)";
         exit(1);
@@ -77,17 +77,18 @@ void AppDataBase::HandleRequestInsert(const QString table_name, const QString fi
 
         QStringList exist_check_list = profile_data.split("!");
         if(login_list.contains(exist_check_list[0]))
-            emit AnswerRequestInsert(AnswerVariants::FAILURE);
+            emit AnswerRequestInsert(AnswerVariants::FAILURE, buffer_id);
         else {
             if(this->InsertValues(table_name, fields, profile_data)) {
-                emit AnswerRequestInsert(AnswerVariants::SUCCESS);
+                emit AnswerRequestInsert(AnswerVariants::SUCCESS, buffer_id);
                 emit TableUpdate();
             }
         }
     }
 }
 
-void AppDataBase::HandleRequestExists(const QString table_name, const QString fields, const QString auth_data) {
+void AppDataBase::HandleRequestExists(const QString table_name, const QString fields, const QString auth_data, const QString buffer_id) {
+    qDebug() << "Поток в обработчике БД: " << QThread::currentThread();
     if(!auth_data.contains("!")) {
         qDebug() << "Ошибка в создании auth_data (AppThread)";
         exit(1);
@@ -104,13 +105,13 @@ void AppDataBase::HandleRequestExists(const QString table_name, const QString fi
 
         QStringList exist_check_list = auth_data.split("!");
         if(!login_list.contains(exist_check_list[0])) {
-            emit AnswerRequestExists(AnswerVariants::FAILURE);
+            emit AnswerRequestExists(AnswerVariants::FAILURE, buffer_id);
         }
         if(login_list.contains(exist_check_list[0])){
             if(password_list.contains(exist_check_list[1]) && password_list.indexOf(exist_check_list[1]) == login_list.indexOf(exist_check_list[0]))
-                emit AnswerRequestExists(AnswerVariants::SUCCESS);
+                emit AnswerRequestExists(AnswerVariants::SUCCESS, buffer_id);
             else
-                emit AnswerRequestExists(AnswerVariants::PASS_ERR);
+                emit AnswerRequestExists(AnswerVariants::PASS_ERR, buffer_id);
         }
     }
 }
