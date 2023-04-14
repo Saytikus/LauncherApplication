@@ -9,33 +9,25 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QWidget
-{
+class MainWindow : public QWidget {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    //void TestDisplay(QString data);
 private:
     Ui::MainWindow *ui;
     void closeEvent(QCloseEvent *event);
 
-public slots:
-    void DisplayMessage(const QString datagram); // test
-
 private slots:
-    //void DisplayMessage(const QString datagram);
+    void DisplayMessageOnMessageWindow(const QString datagram);
+    void DisplayClientPortOnMyPortLine(const quint16 port);
+    void Show();
 
-    void on_send_clicked();
-
-    void DisplayMyPort(const quint16 port);
-    void MainWindowShow();
-
+    void OnSendClicked();
 signals:
-    void SendClicked(const QString message, const QHostAddress address, const quint16 port);
     void ConnectionMustBeFinished();
+    void SendCalled(const QString message, const QHostAddress address, const quint16 port);
 };
 
 #endif // MAINWINDOW_H

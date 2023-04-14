@@ -13,7 +13,7 @@ public:
     explicit ClientBufferPool(QObject *parent = nullptr);
 
 private:
-    QVector <ClientBuffer*> *vector_client_buffer_;
+    QVector <ClientBuffer*> *client_buffers_;
     enum Buffers {
         READ,
         SEND
@@ -32,7 +32,6 @@ private slots:
     void ClearSendBuffer(const QString buffer_id);
 
     void DeleteClientBuffer(const QString buffer_id);
-    void QDebugVector(); //
 signals:
     void ReadBufferChanged(const QBuffer* read_buffer, const QString buffer_id);
     void SendBufferChanged(const QBuffer* send_buffer, const QString buffer_id);

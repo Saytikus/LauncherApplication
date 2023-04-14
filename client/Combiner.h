@@ -5,8 +5,8 @@
 
 #include "QUdpClient.h"
 #include "MainWindow.h"
-#include "Authorization.h"
-#include "Registration.h"
+#include "AuthorizationWindow.h"
+#include "RegistrationWindow.h"
 
 class Combiner : public QObject {
     Q_OBJECT
@@ -15,14 +15,9 @@ public:
     void Combine();
 
     QUdpClient *client_;
-    MainWindow *main_win_;
-    Authorization *auth_win_;
-    Registration *reg_win_;
-
-private:
-
-signals:
-
+    MainWindow *main_window_;
+    AuthorizationWindow *authorization_window_;
+    RegistrationWindow *registration_window_;
 };
 
 #endif // COMBINER_H

@@ -1,16 +1,15 @@
-#ifndef APPTHREAD_H
-#define APPTHREAD_H
+#ifndef SENDER_H
+#define SENDER_H
 
 #include <QObject>
 #include <QThread>
 #include <QHostAddress>
 #include <QBuffer>
 
-class AppThread : public QObject
-{
+class Sender : public QObject {
     Q_OBJECT
 public:
-    explicit AppThread(QObject *parent = nullptr);
+    explicit Sender(QObject *parent = nullptr);
 
     Q_INVOKABLE void SendFromBufferStart(const QBuffer* buffer, const QString buffer_id);
 
@@ -38,4 +37,4 @@ signals:
     //void ReceiveAuthMsg(const QString auth_data);
 };
 
-#endif // APPTHREAD_H
+#endif // SENDER_H

@@ -1,22 +1,21 @@
-#include "Registration.h"
+#include "RegistrationWindow.h"
 #include "ui_Registration.h"
 
-Registration::Registration(QWidget *parent) : QWidget(parent), ui(new Ui::Registration) {
+RegistrationWindow::RegistrationWindow(QWidget *parent) : QWidget(parent), ui(new Ui::RegistrationWindow) {
     ui->setupUi(this);
 
 }
 
-Registration::~Registration()
-{
+RegistrationWindow::~RegistrationWindow() {
     delete ui;
 }
 
-void Registration::on_return_aut_win_clicked() {
-    emit AuthWinCall();
+void RegistrationWindow::OnAuthorizationWindowClicked() {
+    emit AuthorizationWindowCalled();
     this->close();
 }
 
-int Registration::on_registration_clicked() {
+int RegistrationWindow::OnRegistrationClicked() {
     QString entered_login = ui->reg_login->text();
     QString entered_pass = ui->reg_password->text();
 
@@ -37,7 +36,7 @@ int Registration::on_registration_clicked() {
         return -1;
     }
     // Позже разделить методы проверки логина и пароля на несколько, чтобы выводить более информативное сообщение об ошибке
-    if(!LoginCheck(entered_login) || !PassCheck(entered_pass)) {
+    if(!LoginCheck(entered_login) || !PasswordCheck(entered_pass)) {
         ui->registration->setEnabled(false);
         ui->reg_result_message->append("<font color=red>" + QString("Неподходящий логин или пароль") + "</font>");
         this->Delay(3000);
@@ -46,17 +45,17 @@ int Registration::on_registration_clicked() {
         return -1;
     }
 
-    emit RegRequest(entered_login, entered_pass);
+    emit RegistrationRequested(entered_login, entered_pass);
     return 0;
 }
 
-void Registration::RegWinShow() {
+void RegistrationWindow::Show() {
     this->show();
 }
 
-void Registration::AcceptRegAnswer(const int reg_answer) {
+void RegistrationWindow::HandleAnswer(const int reg_answer) {
     switch (reg_answer) {
-    case AnswerVariants::FAILURE:
+    case ServerAnswerVariants::FAILURE:
         ui->registration->setEnabled(false);
         ui->reg_result_message->append("<font color=red>" + QString("Введённый логин уже занят!") + "</font>");
         this->Delay(3000);
@@ -64,7 +63,7 @@ void Registration::AcceptRegAnswer(const int reg_answer) {
         ui->reg_result_message->clear();
         break;
 
-    case AnswerVariants::SUCCESS:
+    case ServerAnswerVariants::SUCCESS:
         ui->registration->setEnabled(false);
         ui->reg_result_message->append("<font color=green>" + QString("Регистрация прошла успешно!") + "</font>");
         ui->reg_result_message->append("<font color=green>" + QString("Возвращаемся в окно авторизации...") + "</font>");
@@ -76,12 +75,12 @@ void Registration::AcceptRegAnswer(const int reg_answer) {
         ui->registration->setEnabled(true);
 
         this->close();
-        emit AuthWinCall();
+        emit AuthorizationWindowCalled();
         break;
     }
 }
 
-void Registration::Delay(const int ms) {
+void RegistrationWindow::Delay(const int ms) {
     QEventLoop loop;
     QTimer timer;
     timer.setInterval(ms);
@@ -91,36 +90,36 @@ void Registration::Delay(const int ms) {
 }
 
 // методы ниже будут перенесены в класс логики(наверное)
-bool Registration::LoginCheck(const QString login) {
+bool RegistrationWindow::LoginCheck(const QString login) {
     if(login.size() > 15 || login.size() < 5)
         return false;
     if(!login[0].isLetter() || login[0].isLower())
         return false;
-    if(!ContainsDigit(login) || ContainsPunctSym(login) ||
+    if(!ContainsDigit(login) || ContainsPunctuationSymbols(login) ||
        ContainsSpace(login))
         return false;
     return true;
 }
 
-bool Registration::PassCheck(const QString password) {
+bool RegistrationWindow::PasswordCheck(const QString password) {
     if(password.size() > 20 || password.size() < 8)
         return false;
     if(!password[0].isLetter() || password[0].isLower())
         return false;
-    if(!ContainsDigit(password) || ContainsPunctSym(password) ||
+    if(!ContainsDigit(password) || ContainsPunctuationSymbols(password) ||
        ContainsSpace(password))
         return false;
     return true;
 }
 
-bool Registration::ContainsDigit(QString check_string) {
+bool RegistrationWindow::ContainsDigit(const QString check_string) {
     for(QChar symbol : check_string) {
         if(symbol.isDigit())
             return true;
     }
     return false;
 }
-bool Registration::ContainsLetter(QString check_string) {
+bool RegistrationWindow::ContainsLetter(const QString check_string) {
     for(QChar symbol : check_string) {
         if(symbol.isLetter())
             return true;
@@ -128,14 +127,14 @@ bool Registration::ContainsLetter(QString check_string) {
     return false;
 }
 
-bool Registration::ContainsPunctSym(QString check_string) {
+bool RegistrationWindow::ContainsPunctuationSymbols(const QString check_string) {
     for(QChar symbol : check_string) {
         if(symbol.isPunct())
             return true;
     }
     return false;
 }
-bool Registration::ContainsSpace(QString check_string) {
+bool RegistrationWindow::ContainsSpace(const QString check_string) {
     for(QChar symbol : check_string) {
         if(symbol.isSpace())
             return true;

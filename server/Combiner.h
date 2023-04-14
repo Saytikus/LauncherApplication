@@ -4,9 +4,9 @@
 #include <QObject>
 
 #include "QUdpServer.h"
-#include "Interface.h"
-#include "AppDataBase.h"
-#include "DataBaseWindow.h"
+#include "MainWindow.h"
+#include "ApplicationDatabase.h"
+#include "DatabaseWindow.h"
 #include "ClientBufferPool.h"
 #include "DataHandlerThreadPool.h"
 
@@ -17,12 +17,11 @@ public:
     void Combine();
 
     QUdpServer *server_;
-    Interface *interface_;
-    AppDataBase *app_db_;
-    DataBaseWindow *db_win_;
-    ClientBufferPool *buf_pool_;
-    DataHandler *connect_handler_;
-    DataHandlerThreadPool *handler_thread_pool_;
+    MainWindow *main_window_;
+    ApplicationDatabase *application_database_;
+    DatabaseWindow *database_window_;
+    ClientBufferPool *client_buffer_pool_;
+    DataHandlerThreadPool *data_handler_thread_pool_;
 signals:
 
 };

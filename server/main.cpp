@@ -9,6 +9,6 @@ int main(int argc, char *argv[])
     Combiner combi;
     combi.Combine();
 
-    combi.interface_->show();
+    combi.main_window_->show();
     return a.exec();
 }

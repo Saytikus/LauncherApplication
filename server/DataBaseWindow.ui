@@ -64,7 +64,7 @@
      </spacer>
     </item>
     <item row="2" column="1">
-     <widget class="QPushButton" name="delete_2">
+     <widget class="QPushButton" name="delete_button">
       <property name="text">
        <string>Удалить</string>
       </property>
@@ -74,5 +74,25 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>delete_button</sender>
+   <signal>clicked()</signal>
+   <receiver>DataBaseWindow</receiver>
+   <slot>OnDeleteButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>405</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>OnDeleteButtonClicked()</slot>
+ </slots>
 </ui>

@@ -11,33 +11,33 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    AppDataBase.cpp \
-    AppThread.cpp \
+    ApplicationDatabase.cpp \
     ClientBuffer.cpp \
     ClientBufferPool.cpp \
     Combiner.cpp \
-    DataBaseWindow.cpp \
     DataHandler.cpp \
     DataHandlerThreadPool.cpp \
+    DatabaseWindow.cpp \
+    MainWindow.cpp \
     QUdpServer.cpp \
-    main.cpp \
-    Interface.cpp
+    Sender.cpp \
+    main.cpp
 
 HEADERS += \
-    AppDataBase.h \
-    AppThread.h \
+    ApplicationDatabase.h \
     ClientBuffer.h \
     ClientBufferPool.h \
     Combiner.h \
-    DataBaseWindow.h \
     DataHandler.h \
     DataHandlerThreadPool.h \
-    Interface.h \
-    QUdpServer.h
+    DatabaseWindow.h \
+    MainWindow.h \
+    QUdpServer.h \
+    Sender.h
 
 FORMS += \
-    DataBaseWindow.ui \
-    Interface.ui
+    DatabaseWindow.ui \
+    MainWindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

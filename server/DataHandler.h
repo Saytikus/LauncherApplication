@@ -16,10 +16,6 @@ public:
     Q_INVOKABLE void HandleAnswerCreateProfile(const int answer, const QString buffer_id);
     Q_INVOKABLE void HandleAnswerExistsProfile(const int answer, const QString buffer_id);
 
-private:
-
-private slots:
-
 signals:
     void RequestCreateProfileToPool(const QString table_name, const QString fields, const QString profile_data, const QString buffer_id);
     void RequestExistsProfileToPool(const QString table_name, const QString fields, const QString auth_data, const QString buffer_id);

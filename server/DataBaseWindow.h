@@ -7,37 +7,35 @@
 #include <QDebug>
 
 namespace Ui {
-class DataBaseWindow;
+class DatabaseWindow;
 }
 
-class DataBaseWindow : public QWidget
-{
+class DatabaseWindow : public QWidget {
     Q_OBJECT
-
 public:
-    explicit DataBaseWindow(QWidget *parent = nullptr);
-    ~DataBaseWindow();
+    explicit DatabaseWindow(QWidget *parent = nullptr);
+    ~DatabaseWindow();
 
 private slots:
-    void Refresh();
+    void RefreshModel();
     void Show();
 
-    int on_delete_2_clicked();
-    void HandleAnswerRequest(const int answer);
+    int OnDeleteButtonClicked();
+    void HandleAnswer(const int answer);
 private:
-    Ui::DataBaseWindow *ui;
+    Ui::DatabaseWindow *ui;
     QSqlTableModel *model;
 
     void SetupModel(const QString table_name, const QStringList headers);
-    void Create();
+    void CreateModel();
 
-    enum AnswerVariants {
-        failure,
-        success
+    enum DatabaseAnswerVariants {
+        FAILURE = -1,
+        SUCCESS = 1,
     };
 
 signals:
-    void DeleteRequest(const QString table_name, const QString first_field_data);
+    void DeleteRequested(const QString table_name, const QString first_field_data);
 };
 
 #endif // DATABASEWINDOW_H

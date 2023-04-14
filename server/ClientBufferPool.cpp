@@ -1,18 +1,18 @@
 #include "ClientBufferPool.h"
 
 ClientBufferPool::ClientBufferPool(QObject *parent) : QObject{parent} {
-    vector_client_buffer_ = new QVector <ClientBuffer*>;
+    client_buffers_ = new QVector <ClientBuffer*>;
 }
 
 void ClientBufferPool::CreateClientBuffer(const QHostAddress client_address, const quint16 client_port) {
     ClientBuffer *buffer = new ClientBuffer(client_address, client_port);
-    vector_client_buffer_->push_back(buffer);
+    client_buffers_->push_back(buffer);
     qDebug() << "Поток в CreateClientBuffer: " << QThread::currentThread(); //
     qDebug() << "Буфер создан"; //
 }
 
 void ClientBufferPool::WriteReadBuffer(const QByteArray data, const int size, const QString buffer_id) {
-    for(ClientBuffer *buf : *vector_client_buffer_) {
+    for(ClientBuffer *buf : *client_buffers_) {
         if(buf->GetBufferId() == buffer_id) {           
             buf->WriteBuffer(Buffers::READ, data, size);
             qDebug() << "Записано в буффер чтения: " << QString(data); //
@@ -23,7 +23,7 @@ void ClientBufferPool::WriteReadBuffer(const QByteArray data, const int size, co
 }
 
 void ClientBufferPool::WriteSendBuffer(const QByteArray data, const int size, const QString buffer_id) {
-    for(ClientBuffer *buf : *vector_client_buffer_) {
+    for(ClientBuffer *buf : *client_buffers_) {
         if(buf->GetBufferId() == buffer_id) {
             mutex.lock();
             buf->WriteBuffer(Buffers::SEND,data, size);
@@ -46,7 +46,7 @@ void ClientBufferPool::SendToHandler(ClientBuffer* buffer, const QString buffer_
 }
 
 void ClientBufferPool::ClearReadBuffer(const QString buffer_id) {
-    for(ClientBuffer *buf : *vector_client_buffer_) {
+    for(ClientBuffer *buf : *client_buffers_) {
         if(buf->GetBufferId() == buffer_id) {
             mutex.lock();
             qDebug() << "Буфер чтения до очищения - " << buf->GetBuffer(Buffers::READ)->buffer().data();
@@ -58,7 +58,7 @@ void ClientBufferPool::ClearReadBuffer(const QString buffer_id) {
 }
 
 void ClientBufferPool::ClearSendBuffer(const QString buffer_id) {
-    for(ClientBuffer *buf : *vector_client_buffer_) {
+    for(ClientBuffer *buf : *client_buffers_) {
         if(buf->GetBufferId() == buffer_id) {
             mutex.lock();
             qDebug() << "Буфер записи до очищения - " << buf->GetBuffer(Buffers::SEND)->buffer().data();
@@ -70,10 +70,10 @@ void ClientBufferPool::ClearSendBuffer(const QString buffer_id) {
 }
 
 void ClientBufferPool::DeleteClientBuffer(const QString buffer_id) {
-    for(ClientBuffer *buf : *vector_client_buffer_) {
+    for(ClientBuffer *buf : *client_buffers_) {
         if(buf->GetBufferId() == buffer_id) {
             mutex.lock();
-            qDebug() << vector_client_buffer_->removeOne(buf);
+            qDebug() << client_buffers_->removeOne(buf);
             mutex.unlock();
         }
     }

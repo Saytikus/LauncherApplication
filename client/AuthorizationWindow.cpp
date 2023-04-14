@@ -1,32 +1,32 @@
-#include "Authorization.h"
-#include "ui_Authorization.h"
+#include "AuthorizationWindow.h"
+#include "ui_AuthorizationWindow.h"
 
-Authorization::Authorization(QWidget *parent) : QWidget(parent), ui(new Ui::Authorization) {
+AuthorizationWindow::AuthorizationWindow(QWidget *parent) : QWidget(parent), ui(new Ui::AuthorizationWindow) {
     ui->setupUi(this);
 
 }
 
-Authorization::~Authorization() {
+AuthorizationWindow::~AuthorizationWindow() {
     delete ui;
 }
 
-void Authorization::AuthWinShow() {
+void AuthorizationWindow::Show() {
     this->show();
 }
 
-void Authorization::on_in_reg_win_clicked() {
-    emit RegWinCall();
+void AuthorizationWindow::OnRegistrationWindowClicked() {
+    emit RegistrationWindowCalled();
     this->close();
 }
 
-void Authorization::on_sign_in_clicked() {
-    emit AuthStart(ui->login->text(), ui->password->text());
+void AuthorizationWindow::OnSignInClicked() {
+    emit AuthorizationStarted(ui->login->text(), ui->password->text());
 }
 
-void Authorization::AcceptAuthAnswer(const int auth_answer) {
+void AuthorizationWindow::HandleAnswer(const int auth_answer) {
     switch (auth_answer) {
 
-    case AnswerVariants::FAILURE:
+    case ServerAnswerVariants::FAILURE:
         ui->auth_result_message->append("<font color=red>" + QString("Такого пользователя не существует") + "</font>");
         ui->sign_in->setEnabled(false);
         this->Delay(3000);
@@ -34,7 +34,7 @@ void Authorization::AcceptAuthAnswer(const int auth_answer) {
         ui->auth_result_message->clear();
         break;
 
-    case AnswerVariants::PASS_ERR:
+    case ServerAnswerVariants::PASS_ERR:
         ui->auth_result_message->append("<font color=red>" + QString("Неверный пароль") + "</font>");
         ui->sign_in->setEnabled(false);
         this->Delay(3000);
@@ -42,7 +42,7 @@ void Authorization::AcceptAuthAnswer(const int auth_answer) {
         ui->auth_result_message->clear();
         break;
 
-    case AnswerVariants::SUCCESS:
+    case ServerAnswerVariants::SUCCESS:
         ui->auth_result_message->append("<font color=green>" + QString("Вы успешно вошли!") + "</font>");
         ui->auth_result_message->append("<font color=green>" + QString("Запускаем приложение...") + "</font>");
         ui->sign_in->setEnabled(false);
@@ -50,12 +50,12 @@ void Authorization::AcceptAuthAnswer(const int auth_answer) {
 
         ui->auth_result_message->clear();
         this->close();
-        emit AuthSuccessful();
+        emit AuthorizationCompletedSuccessful();
         break;
     }
 }
 
-void Authorization::Delay(const int ms) {
+void AuthorizationWindow::Delay(const int ms) {
     QEventLoop loop;
     QTimer timer;
     timer.setInterval(ms);

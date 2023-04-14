@@ -1,21 +1,21 @@
-#include "DataBaseWindow.h"
+#include "DatabaseWindow.h"
 #include "ui_DataBaseWindow.h"
 
-DataBaseWindow::DataBaseWindow(QWidget *parent) : QWidget(parent), ui(new Ui::DataBaseWindow) {
+DatabaseWindow::DatabaseWindow(QWidget *parent) : QWidget(parent), ui(new Ui::DatabaseWindow) {
     ui->setupUi(this);
 
     QStringList headers;
     headers.append("логин");
     headers.append("пароль");
     this->SetupModel("profiles", headers);
-    this->Create();
+    this->CreateModel();
 }
 
-DataBaseWindow::~DataBaseWindow() {
+DatabaseWindow::~DatabaseWindow() {
     delete ui;
 }
 
-void DataBaseWindow::SetupModel(const QString table_name, const QStringList headers) {
+void DatabaseWindow::SetupModel(const QString table_name, const QStringList headers) {
     model = new QSqlTableModel(this);
     model->setTable(table_name);
     for(int i = 0, j = 0; i < model->columnCount(); i++, j++){
@@ -23,37 +23,37 @@ void DataBaseWindow::SetupModel(const QString table_name, const QStringList head
     }
 }
 
-void DataBaseWindow::Create() {
+void DatabaseWindow::CreateModel() {
     ui->database_table->setModel(model);
     model->select();
 }
 
-void DataBaseWindow::Refresh() {
+void DatabaseWindow::RefreshModel() {
     model->select();
 }
 
-void DataBaseWindow::Show() {
+void DatabaseWindow::Show() {
     this->show();
 }
 
-int DataBaseWindow::on_delete_2_clicked() {
+int DatabaseWindow::OnDeleteButtonClicked() {
     if (QMessageBox::warning(this,"Удаление записи", "Вы уверены, что хотите удалить эту запись?",
                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
     }
     else {
-        emit DeleteRequest("profiles", ui->delete_profile->text());
-        this->Refresh();
+        emit DeleteRequested("profiles", ui->delete_profile->text());
+        this->RefreshModel();
     }
     return 0;
 }
 
-void DataBaseWindow::HandleAnswerRequest(const int answer) {
+void DatabaseWindow::HandleAnswer(const int answer) {
     qDebug() << answer;
-    if(answer == AnswerVariants::success) {
+    if(answer == DatabaseAnswerVariants::SUCCESS) {
         QMessageBox::warning(this, "Уведомление", "Удаление прошло успешно!");
-        this->Refresh();
+        this->RefreshModel();
     }
-    if(answer == AnswerVariants::failure) {
+    if(answer == DatabaseAnswerVariants::FAILURE) {
         QMessageBox::warning(this, "Ошибка", "Не удалось удалить профиль!");
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Registration</class>
- <widget class="QWidget" name="Registration">
+ <class>RegistrationWindow</class>
+ <widget class="QWidget" name="RegistrationWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -50,7 +50,7 @@
    <item row="1" column="0" colspan="3">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QPushButton" name="return_aut_win">
+      <widget class="QPushButton" name="authorization_window">
        <property name="text">
         <string>Вернутьться к окну авторизации</string>
        </property>
@@ -116,5 +116,42 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>authorization_window</sender>
+   <signal>clicked()</signal>
+   <receiver>RegistrationWindow</receiver>
+   <slot>OnAuthorizationWindowClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>registration</sender>
+   <signal>clicked()</signal>
+   <receiver>RegistrationWindow</receiver>
+   <slot>OnRegistrationClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>OnAuthorizationWindowClicked()</slot>
+  <slot>OnRegistrationClicked()</slot>
+ </slots>
 </ui>

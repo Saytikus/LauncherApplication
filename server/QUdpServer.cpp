@@ -21,16 +21,16 @@ bool QUdpServer::Bind(const QHostAddress address) {
 
         QThread *thread = new QThread();
         thread->setObjectName("Sender thread");
-        send_thread = new AppThread();
-        send_thread->moveToThread(thread);
+        sender = new Sender();
+        sender->moveToThread(thread);
 
-        connect(send_thread, SIGNAL(IdDecompositionCall(const QString, const bool)),
+        connect(sender, SIGNAL(IdDecompositionCall(const QString, const bool)),
                 this, SLOT(IdDecomposition(const QString, const bool)), Qt::DirectConnection);
         connect(this, SIGNAL(IdDecompositionFinished(const QStringList)),
-                send_thread, SLOT(SendFromBufferContinue(const QStringList)), Qt::DirectConnection);
-        connect(send_thread, SIGNAL(SendCall(const QByteArray, const QHostAddress, const quint16)),
+                sender, SLOT(SendFromBufferContinue(const QStringList)), Qt::DirectConnection);
+        connect(sender, SIGNAL(SendCall(const QByteArray, const QHostAddress, const quint16)),
                 this, SLOT(Send(const QByteArray, const QHostAddress, const quint16)), Qt::DirectConnection);
-        connect(send_thread, SIGNAL(HandleSendBufferFinished(const QString)),
+        connect(sender, SIGNAL(HandleSendBufferFinished(const QString)),
                 this, SLOT(TransferHandleSendBufferFinished(const QString)), Qt::DirectConnection);
 
         thread->start();
@@ -66,9 +66,6 @@ void QUdpServer::Read(){
 }
 
 void QUdpServer::Send(const QByteArray message, const QHostAddress address, const quint16 port) {
-    qDebug() << "Send start - " << QThread::currentThread();
-    qDebug() << "MESSAGE: " << message;
-    qDebug() << "ADDR: " << address << " | " << "PORT: " << port;
     socket_->writeDatagram(message, address, port);
 }
 
@@ -109,6 +106,7 @@ bool QUdpServer::IncomingConnection(const QString message, const QHostAddress se
 }
 
 void QUdpServer::SendCall(const QString message, const QHostAddress address, const quint16 port) {
+    qDebug() << "Отправлено msg!"; //
     this->Send(message.toUtf8(), address, port);
 }
 
@@ -147,7 +145,7 @@ void QUdpServer::SendPocket(const QString message) {
 void QUdpServer::SendBufferChange(const QBuffer* send_buffer, const QString buffer_id) {
     qDebug() << "Поток в SendBufferChange: " << QThread::currentThread();
 
-    QMetaObject::invokeMethod(send_thread, "SendFromBufferStart",
+    QMetaObject::invokeMethod(sender, "SendFromBufferStart",
                               Qt::QueuedConnection,
                               Q_ARG(const QBuffer*, send_buffer),
                               Q_ARG(const QString, buffer_id));

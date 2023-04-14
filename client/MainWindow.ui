@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QListWidget" name="message_win"/>
+    <widget class="QListWidget" name="message_window"/>
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="main_window_label">
@@ -88,5 +88,25 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>send</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSendClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>133</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>264</x>
+     <y>147</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>OnSendClicked()</slot>
+ </slots>
 </ui>

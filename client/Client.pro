@@ -11,24 +11,24 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Authorization.cpp \
+    AuthorizationWindow.cpp \
     Combiner.cpp \
     MainWindow.cpp \
     QUdpClient.cpp \
-    Registration.cpp \
+    RegistrationWindow.cpp \
     main.cpp
 
 HEADERS += \
-    Authorization.h \
+    AuthorizationWindow.h \
     Combiner.h \
     MainWindow.h \
     QUdpClient.h \
-    Registration.h
+    RegistrationWindow.h
 
 FORMS += \
-    Authorization.ui \
+    AuthorizationWindow.ui \
     MainWindow.ui \
-    Registration.ui
+    RegistrationWindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -7,9 +7,8 @@
 #include <QRandomGenerator>
 #include <QStringList>
 
-#include "AppThread.h"
+#include "Sender.h"
 #include <QVector>
-#include "ClientBuffer.h"
 
 class QUdpServer : public QObject
 {
@@ -25,7 +24,7 @@ public:
 
 private:
     QUdpSocket *socket_;
-    AppThread *send_thread;
+    Sender *sender;
 
     QVector<QString> addressANDport_vector_; //пока что вместо БД
     bool IpANDPortCheck(const QString pair); //пока что вместо БД

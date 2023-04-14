@@ -9,24 +9,20 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::DisplayMessage(QString datagram) {
-    ui->message_win->addItem(datagram);
+void MainWindow::DisplayMessageOnMessageWindow(QString datagram) {
+    ui->message_window->addItem(datagram);
 }
 
-void MainWindow::on_send_clicked() {
-    emit SendClicked(ui->send_message->text(), QHostAddress::LocalHost, ui->send_port->value());
+void MainWindow::OnSendClicked() {
+    emit SendCalled(ui->send_message->text(), QHostAddress::LocalHost, ui->send_port->value());
     ui->send_message->clear();
 }
 
-/*void MainWindow::TestDisplay(QString data) {
-    ui->message_win->addItem("TestDisplay: " + data);
-}*/
-
-void MainWindow::DisplayMyPort(const quint16 port) {
+void MainWindow::DisplayClientPortOnMyPortLine(const quint16 port) {
     ui->my_port->setText(QString::number(port));
 }
 
-void MainWindow::MainWindowShow() {
+void MainWindow::Show() {
     this->show();
 }
 

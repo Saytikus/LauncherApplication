@@ -12,14 +12,13 @@ public:
     explicit QUdpClient(QObject *parent = nullptr);
     ~QUdpClient();
     bool Bind(const QHostAddress address, quint16 port);
-    void Send(const QString message,const QHostAddress address, const quint16 port);
     QString HandShakeStart();
 
 private:
     QUdpSocket *socket_;
     QHostAddress server_address_ = QHostAddress::LocalHost;
     quint16 work_port_ = 4352;
-    int syn_digit_;
+    int synchronization_digit_;
     enum ServerModes{
         AUTH,
         REG,
@@ -31,24 +30,22 @@ private:
     void RedirectMessage(const QString message);
 
 public slots:
-    void AuthRequestSend(const QString login, const QString password); // test
+    void Send(const QString message,const QHostAddress address, const quint16 port);
 
 private slots:
     QString Read();
-    void SendCall(const QString message,const QHostAddress address, const quint16 port);
     QString HandShakeComplete();
 
-    void RegRequestSend(const QString login, const QString password);
-    //void AuthRequestSend(const QString login, const QString password);
-    void SendConnectionClosed();
+    void RegistrationRequestSend(const QString login, const QString password);
+    void AuthorizationRequestSend(const QString login, const QString password);
+    void ConnectionClosedSend();
 
 signals:
-    void ReceivePocket(const QString message);
+    void PocketReceived(const QString message);
+    void SocketBinded(const quint16 port);
 
-    void SocketBinded(const quint16 port); //
-
-    void ReceiveRegAnswer(const int reg_answer);
-    void ReceiveAuthAnswer(const int auth_answer);
+    void RegistrationAnswerReceived(const int reg_answer);
+    void AuthorizationAnswerReceived(const int auth_answer);
 };
 
 #endif // QUDPCLIENT_H

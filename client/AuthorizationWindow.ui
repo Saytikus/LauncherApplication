@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Authorization</class>
- <widget class="QWidget" name="Authorization">
+ <class>AuthorizationWindow</class>
+ <widget class="QWidget" name="AuthorizationWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -51,7 +51,7 @@
        </spacer>
       </item>
       <item row="1" column="0">
-       <widget class="QPushButton" name="in_reg_win">
+       <widget class="QPushButton" name="registration_window">
         <property name="minimumSize">
          <size>
           <width>50</width>
@@ -191,5 +191,42 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>registration_window</sender>
+   <signal>clicked()</signal>
+   <receiver>AuthorizationWindow</receiver>
+   <slot>OnRegistrationWindowClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sign_in</sender>
+   <signal>clicked()</signal>
+   <receiver>AuthorizationWindow</receiver>
+   <slot>OnSignInClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>OnRegistrationWindowClicked()</slot>
+  <slot>OnSignInClicked()</slot>
+ </slots>
 </ui>
